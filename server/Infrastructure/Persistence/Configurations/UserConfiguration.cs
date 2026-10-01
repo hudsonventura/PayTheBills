@@ -30,5 +30,14 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(u => u.CreatedAtUtc)
             .IsRequired();
+
+        builder.HasData(new
+        {
+            Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
+            Name = "Administrador",
+            Email = "admin",
+            PasswordHash = "100000.AQIDBAUGBwgJCgsMDQ4PEA==.yMF7HGFzLN5XdGHja2gt6rLdpc1yeX0lF1Jt/Lw51rM=",
+            CreatedAtUtc = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+        });
     }
 }

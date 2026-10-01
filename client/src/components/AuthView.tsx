@@ -32,11 +32,11 @@ export const AuthView: React.FC<AuthViewProps> = ({ language, onSuccess }) => {
         setError(t.passwordsMismatch);
         return;
       }
-      if (password.length < 6) {
+      if (password.length < 5) {
         setError(
           language === 'pt'
-            ? 'A senha deve ter pelo menos 6 caracteres.'
-            : 'Password must be at least 6 characters.'
+            ? 'A senha deve ter pelo menos 5 caracteres.'
+            : 'Password must be at least 5 characters.'
         );
         return;
       }
@@ -132,7 +132,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ language, onSuccess }) => {
             <label htmlFor="auth-email">{t.email}</label>
             <input
               id="auth-email"
-              type="email"
+              type="text"
               className="form-control"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -152,7 +152,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ language, onSuccess }) => {
               onChange={(e) => setPassword(e.target.value)}
               required
               autoComplete={isRegister ? 'new-password' : 'current-password'}
-              minLength={6}
+              minLength={5}
             />
           </div>
 
@@ -167,7 +167,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ language, onSuccess }) => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 autoComplete="new-password"
-                minLength={6}
+                minLength={5}
               />
             </div>
           )}

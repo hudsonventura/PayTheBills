@@ -14,6 +14,12 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<Bill> Bills => Set<Bill>();
     public DbSet<BillExecution> BillExecutions => Set<BillExecution>();
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+        optionsBuilder.ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

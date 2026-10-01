@@ -77,6 +77,10 @@ public static class AppExtensions
         }
 
         app.UseCors();
+
+        app.UseDefaultFiles();
+        app.UseStaticFiles();
+
         app.UseAuthentication();
         app.UseAuthorization();
 
@@ -86,6 +90,19 @@ public static class AppExtensions
             using var scope = app.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             db.Database.Migrate();
+
+            if (!db.Users.Any())
+            {
+                var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+                db.Users.Add(new Server.Domain.Entities.User(
+                    id: Guid.Parse("00000000-0000-0000-0000-000000000001"),
+                    name: "Administrador",
+                    email: "admin",
+                    passwordHash: passwordHasher.HashPassword("admin"),
+                    createdAtUtc: DateTime.UtcNow
+                ));
+                db.SaveChanges();
+            }
         }
         catch (Exception ex)
         {
@@ -94,6 +111,8 @@ public static class AppExtensions
 
         app.MapAuthEndpoints();
         app.MapBillEndpoints();
+
+        app.MapFallbackToFile("index.html");
 
         return app;
     }

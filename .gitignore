@@ -3,3 +3,7 @@ server/bin/*
 server.Tests/bin/*
 server.Tests/obj/*
 client/.env
+db/
+client/node_modules/
+client/dist/
+server/wwwroot/

@@ -26,8 +26,8 @@ public class AuthUseCases
         if (string.IsNullOrWhiteSpace(request.Email))
             throw new ArgumentException("Email is required.", nameof(request.Email));
 
-        if (string.IsNullOrWhiteSpace(request.Password) || request.Password.Length < 6)
-            throw new ArgumentException("Password must be at least 6 characters.", nameof(request.Password));
+        if (string.IsNullOrWhiteSpace(request.Password) || request.Password.Length < 5)
+            throw new ArgumentException("Password must be at least 5 characters.", nameof(request.Password));
 
         var normalizedEmail = request.Email.Trim().ToLowerInvariant();
         var existing = await _context.Users.AnyAsync(u => u.Email == normalizedEmail, ct);
