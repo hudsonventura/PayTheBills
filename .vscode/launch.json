@@ -1,0 +1,74 @@
+{
+  "version": "0.2.0",
+  "compounds": [
+    {
+      "name": "Full Stack: Backend (.NET) + Frontend (Chrome)",
+      "configurations": [
+        "Debug Backend (.NET)",
+        "Debug Frontend (Chrome)"
+      ],
+      "stopAll": true
+    },
+    {
+      "name": "Full Stack: Backend (.NET) + Frontend (Edge)",
+      "configurations": [
+        "Debug Backend (.NET)",
+        "Debug Frontend (Edge)"
+      ],
+      "stopAll": true
+    }
+  ],
+  "configurations": [
+    {
+      "name": "Full Stack: .NET Server (with Frontend Dev Server)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "prepare-fullstack",
+      "program": "${workspaceFolder}/server/bin/Debug/net10.0/server.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/server",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+        "uriFormat": "http://localhost:5173"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    {
+      "name": "Debug Backend (.NET)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-server",
+      "program": "${workspaceFolder}/server/bin/Debug/net10.0/server.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/server",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    {
+      "name": "Debug Frontend (Chrome)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/client/src",
+      "preLaunchTask": "start-client"
+    },
+    {
+      "name": "Debug Frontend (Edge)",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/client/src",
+      "preLaunchTask": "start-client"
+    }
+  ]
+}

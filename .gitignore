@@ -1,2 +1,5 @@
 server/obj/*
 server/bin/*
+server.Tests/bin/*
+server.Tests/obj/*
+client/.env
