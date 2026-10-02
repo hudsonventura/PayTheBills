@@ -37,8 +37,9 @@ public class AuthUseCases
         }
 
         var id = global::SnowflakeGuid.NewGuid();
-        var passwordHash = _passwordHasher.HashPassword(request.Password);
-        var user = new User(id, request.Name, normalizedEmail, passwordHash);
+        var salt = _passwordHasher.GenerateSalt();
+        var passwordHash = _passwordHasher.HashPassword(request.Password, salt);
+        var user = new User(id, request.Name, normalizedEmail, passwordHash, salt);
 
         _context.Users.Add(user);
         await _context.SaveChangesAsync(ct);
@@ -52,7 +53,7 @@ public class AuthUseCases
         var normalizedEmail = request.Email.Trim().ToLowerInvariant();
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == normalizedEmail, ct);
 
-        if (user == null || !_passwordHasher.VerifyPassword(request.Password, user.PasswordHash))
+        if (user == null || !_passwordHasher.VerifyPassword(request.Password, user.PasswordSalt, user.PasswordHash))
         {
             throw new UnauthorizedAccessException("Invalid email or password.");
         }

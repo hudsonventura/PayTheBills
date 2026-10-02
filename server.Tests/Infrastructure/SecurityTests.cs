@@ -22,13 +22,18 @@ public class SecurityTests
     public void Pbkdf2PasswordHasher_HashesAndVerifiesPasswordCorrectly()
     {
         var hasher = new Pbkdf2PasswordHasher();
+        var salt = hasher.GenerateSalt();
         var password = "MySecurePassword123!";
 
-        var hash = hasher.HashPassword(password);
+        Assert.Equal(16, salt.Length);
+        const string specialChars = "!@#$%^&*()_+-=[]{}|;:,.<>?";
+        Assert.True(salt.Count(c => specialChars.Contains(c)) >= 6);
+
+        var hash = hasher.HashPassword(password, salt);
 
         Assert.False(string.IsNullOrWhiteSpace(hash));
-        Assert.True(hasher.VerifyPassword(password, hash));
-        Assert.False(hasher.VerifyPassword("WrongPassword", hash));
+        Assert.True(hasher.VerifyPassword(password, salt, hash));
+        Assert.False(hasher.VerifyPassword("WrongPassword", salt, hash));
     }
 
     [Fact]
@@ -46,7 +51,7 @@ public class SecurityTests
             .Build();
 
         var tokenService = new JwtTokenService(configuration);
-        var user = new User(Guid.NewGuid(), "Hudson", "hudson@test.com", "fakehash");
+        var user = new User(Guid.NewGuid(), "Hudson", "hudson@test.com", "fakehash", "!@#_$%^&aB12cD34");
 
         var token = tokenService.GenerateToken(user);
 

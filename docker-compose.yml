@@ -1,22 +1,4 @@
 services:
-  db:
-    image: postgres:16
-    container_name: paythebills-db
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: paythebills
-    ports:
-      - "5432:5432"
-    volumes:
-      - ./db/:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d paythebills"]
-      interval: 3s
-      timeout: 3s
-      retries: 5
-
   app:
     build:
       context: .
@@ -29,11 +11,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:5000;http://+:5173
-      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=paythebills;Username=postgres;Password=postgres
-    depends_on:
-      db:
-        condition: service_healthy
-
-volumes:
-  pgdata:
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/paythebills.db
+    volumes:
+      - ./data:/app/data
 

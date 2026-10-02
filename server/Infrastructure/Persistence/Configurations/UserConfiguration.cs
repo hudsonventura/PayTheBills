@@ -28,6 +28,10 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasMaxLength(500)
             .IsRequired();
 
+        builder.Property(u => u.PasswordSalt)
+            .HasMaxLength(100)
+            .IsRequired();
+
         builder.Property(u => u.CreatedAtUtc)
             .IsRequired();
 
@@ -36,7 +40,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
             Name = "Administrador",
             Email = "admin",
-            PasswordHash = "100000.AQIDBAUGBwgJCgsMDQ4PEA==.yMF7HGFzLN5XdGHja2gt6rLdpc1yeX0lF1Jt/Lw51rM=",
+            PasswordHash = "100000.X49NTZljdhivmj57UjluyMMlz8SKMizGnb31hqnCPC4=",
+            PasswordSalt = "!@#_$%^&aB12cD34",
             CreatedAtUtc = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
         });
     }

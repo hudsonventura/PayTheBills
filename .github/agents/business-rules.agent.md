@@ -8,11 +8,14 @@ Voce e o agente responsavel pelas regras de negocio do PayTheBills. Este arquivo
 
 ## Regras registradas
 
-### Estado atual
+### Regras confirmadas
 
-- Nenhuma regra de negocio foi especificada ou confirmada ate o momento.
-- O nome PayTheBills nao e suficiente para inferir fluxos, politicas de cobranca, pagamentos, recorrencia, juros, multas, prazos, permissao ou tratamento de falhas.
-- Ate que o responsavel pelo produto confirme regras, trate cada comportamento de dominio como indefinido. Nao transforme suposicoes em codigo ou testes normativos.
+- **BR-AUTH-01 (Usuário Inicial / Seed)**: Quando o banco de dados for inicializado ou estiver vazio, deve existir automaticamente um usuário administrador inicial com email/login `admin` e senha `admin`.
+- **BR-AUTH-02 (Salt de Senha)**:
+  - Todo usuário possui um salt de senha associado de exatamente 16 caracteres aleatórios, contendo no mínimo 6 caracteres especiais pertencentes ao conjunto `!@#$%^&*()_+-=[]{}|;:,.<>?`.
+  - O salt é persistido na entidade do usuário no banco de dados (`PasswordSalt`).
+  - O hash de senha é gerado a partir da concatenação do salt com a senha (`salt + password`) utilizando PBKDF2 com SHA-256 e 100.000 iterações.
+  - No fluxo de login, o sistema busca o usuário pelo identificador/email, obtém seu `PasswordSalt` e valida a senha recebida utilizando esse salt contra o `PasswordHash` armazenado.
 
 ## Protocolo obrigatorio para mudancas de regra
 

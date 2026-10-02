@@ -7,3 +7,7 @@ db/
 client/node_modules/
 client/dist/
 server/wwwroot/
+data/
+*.db
+*.db-shm
+*.db-wal

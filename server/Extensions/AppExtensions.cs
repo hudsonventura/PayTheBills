@@ -19,7 +19,7 @@ public static class AppExtensions
 
         // Database
         builder.Services.AddDbContext<AppDbContext>(options =>
-            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+            options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
         builder.Services.AddScoped<IAppDbContext>(sp => sp.GetRequiredService<AppDbContext>());
 
         // Security & Token services
@@ -89,16 +89,32 @@ public static class AppExtensions
         {
             using var scope = app.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            var connectionString = app.Configuration.GetConnectionString("DefaultConnection") ?? "";
+            var match = System.Text.RegularExpressions.Regex.Match(connectionString, @"Data Source=([^;]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            if (match.Success)
+            {
+                var dbPath = match.Groups[1].Value.Trim();
+                var dir = Path.GetDirectoryName(dbPath);
+                if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+            }
+
             db.Database.Migrate();
 
             if (!db.Users.Any())
             {
                 var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+                const string adminSalt = "!@#_$%^&aB12cD34";
+                var adminHash = passwordHasher.HashPassword("admin", adminSalt);
                 db.Users.Add(new Server.Domain.Entities.User(
                     id: Guid.Parse("00000000-0000-0000-0000-000000000001"),
                     name: "Administrador",
                     email: "admin",
-                    passwordHash: passwordHasher.HashPassword("admin"),
+                    passwordHash: adminHash,
+                    passwordSalt: adminSalt,
                     createdAtUtc: DateTime.UtcNow
                 ));
                 db.SaveChanges();
