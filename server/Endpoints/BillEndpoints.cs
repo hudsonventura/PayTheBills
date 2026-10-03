@@ -65,6 +65,27 @@ public static class BillEndpoints
             return Results.Ok(bills);
         });
 
+        // Get monthly spending comparison
+        group.MapGet("/monthly-spending", async (
+            ClaimsPrincipal user,
+            BillUseCases billUseCases,
+            [FromQuery] int? months,
+            [FromQuery] string? refDate,
+            CancellationToken ct) =>
+        {
+            var userId = GetUserId(user);
+            if (userId == null) return Results.Unauthorized();
+
+            DateOnly? referenceDate = null;
+            if (!string.IsNullOrEmpty(refDate) && DateOnly.TryParse(refDate, out var parsedRefDate))
+            {
+                referenceDate = parsedRefDate;
+            }
+
+            var spending = await billUseCases.GetMonthlySpendingAsync(userId.Value, months ?? 6, referenceDate, ct);
+            return Results.Ok(spending);
+        });
+
         // Get bill by id
         group.MapGet("/{billId:guid}", async (
             ClaimsPrincipal user,

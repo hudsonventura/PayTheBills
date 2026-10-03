@@ -5,13 +5,14 @@ import { Navbar } from './components/Navbar';
 import { AuthView } from './components/AuthView';
 import { BillsList } from './components/BillsList';
 import { BillsManagement } from './components/BillsManagement';
+import { MonthlyComparisonView } from './components/MonthlyComparisonView';
 import './App.css';
 
 function App() {
   const [language, setLanguage] = useState<Language>(() => detectBrowserLanguage());
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(() => !!getAuthToken());
-  const [currentView, setCurrentView] = useState<'executions' | 'bills'>('executions');
+  const [currentView, setCurrentView] = useState<'executions' | 'bills' | 'comparison'>('executions');
 
   const handleLanguageChange = (lang: Language) => {
     setLanguage(lang);
@@ -72,8 +73,10 @@ function App() {
             language={language}
             onNavigateToBills={() => setCurrentView('bills')}
           />
-        ) : (
+        ) : currentView === 'bills' ? (
           <BillsManagement language={language} />
+        ) : (
+          <MonthlyComparisonView language={language} />
         )}
       </main>
 

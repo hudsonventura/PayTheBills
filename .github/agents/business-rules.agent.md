@@ -29,6 +29,11 @@ Voce e o agente responsavel pelas regras de negocio do PayTheBills. Este arquivo
   - Para contas com frequência semanal, é obrigatório informar o dia da semana (`DayOfWeek`) em que o pagamento acontecerá, admitindo valores de domingo a sábado (0 a 6, correspondendo a domingo = 0 até sábado = 6).
   - Para contas que não possuam frequência semanal, o campo `DayOfWeek` não é aplicável e permanece nulo.
   - O cálculo de ocorrências para contas semanais projeta as datas a cada 7 dias no dia da semana especificado a partir da data de início (`StartDate`), não gerando ocorrências com datas anteriores à data de início.
+- **BR-BILL-04 (Comparativo Mensal de Gastos e Filtros)**:
+  - O sistema disponibiliza consulta analítica/comparativa mensal de gastos históricos e do mês atual.
+  - O valor pago de cada mês reflete os pagamentos concretizados (execuções) pertinentes àquele período.
+  - O comparativo suporta tanto a visão geral (soma de todas as contas do usuário) quanto a visão discriminada por conta (filtrando uma ou mais contas).
+  - Na interface, todas as contas iniciam selecionadas por padrão, e há um botão dedicado para marcar e desmarcar todas simultaneamente.
 
 ## Protocolo obrigatorio para mudancas de regra
 

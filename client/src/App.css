@@ -993,6 +993,509 @@
   text-align: right;
 }
 
+/* ==========================================================================
+   Monthly Comparison View Styles
+   ========================================================================== */
+.comparison-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.comparison-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.comparison-title-wrapper h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-h);
+  margin-bottom: 0.25rem;
+}
+
+.comparison-subtitle {
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.period-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.period-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Filter Card for Bills */
+.bills-filter-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: var(--shadow);
+}
+
+.bills-filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.bills-filter-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text-h);
+}
+
+.bills-selected-badge {
+  font-size: 0.8rem;
+  background: var(--accent-bg);
+  color: var(--accent);
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.select-all-btn {
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bills-chips-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.bill-chip-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--code-bg);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.875rem;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.bill-chip-item:hover {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--text-h);
+}
+
+.bill-chip-item.active {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  color: var(--text-h);
+  font-weight: 600;
+}
+
+.bill-chip-item input[type="checkbox"] {
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+
+.bill-chip-title {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Summary Cards Grid */
+.summary-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.summary-value.highlight-current {
+  color: #10b981;
+}
+
+.summary-diff {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 0.35rem;
+}
+
+.diff-up {
+  color: #ef4444;
+}
+
+.diff-down {
+  color: #10b981;
+}
+
+.diff-neutral {
+  color: var(--text);
+}
+
+/* Bar Chart Card */
+.chart-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  min-height: 380px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.chart-loading,
+.chart-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: var(--text);
+}
+
+.chart-wrapper {
+  display: flex;
+  height: 320px;
+  gap: 1rem;
+  padding-top: 1.5rem;
+  position: relative;
+}
+
+.chart-y-axis {
+  width: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text);
+  text-align: right;
+  padding-right: 0.5rem;
+  user-select: none;
+  padding-bottom: 35px;
+}
+
+.chart-bars-area {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-gridlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 35px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.chart-gridlines .gridline {
+  border-bottom: 1px dashed var(--border);
+  width: 100%;
+  opacity: 0.7;
+}
+
+.chart-gridlines .gridline.baseline {
+  border-bottom: 2px solid var(--border);
+  opacity: 1;
+}
+
+.chart-bars-container {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  height: 100%;
+  align-items: flex-end;
+  justify-content: space-around;
+  gap: 0.75rem;
+  padding-bottom: 35px;
+}
+
+.chart-bar-column {
+  flex: 1;
+  max-width: 65px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.bar-value-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.chart-bar-column.is-current .bar-value-label,
+.chart-bar-column.hovered .bar-value-label {
+  color: var(--text-h);
+  font-weight: 700;
+  transform: translateY(-2px);
+}
+
+.bar-track {
+  width: 100%;
+  max-width: 44px;
+  height: calc(100% - 25px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  position: relative;
+}
+
+.bar-fill {
+  width: 100%;
+  background: linear-gradient(180deg, #34d399 0%, #10b981 40%, #059669 100%);
+  border-radius: 6px 6px 0 0;
+  transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1), filter 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chart-bar-column.is-current .bar-fill {
+  background: linear-gradient(180deg, #6ee7b7 0%, #10b981 30%, #047857 100%);
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.45);
+}
+
+.chart-bar-column.hovered .bar-fill {
+  filter: brightness(1.15);
+  transform: scaleX(1.05);
+}
+
+.bar-footer {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.bar-month-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.current-pill {
+  font-size: 0.6rem;
+  font-weight: 700;
+  background: #10b981;
+  color: #fff;
+  padding: 1px 5px;
+  border-radius: 8px;
+  letter-spacing: 0.2px;
+}
+
+/* Tooltip on Bar Hover */
+.chart-tooltip {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  z-index: 100;
+  min-width: 190px;
+  pointer-events: none;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.chart-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: var(--border) transparent transparent transparent;
+}
+
+.tooltip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.tooltip-header strong {
+  font-size: 0.85rem;
+  color: var(--text-h);
+}
+
+.badge-current {
+  font-size: 0.65rem;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  padding: 1px 5px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  margin-bottom: 0.2rem;
+  color: var(--text);
+}
+
+.tooltip-row strong {
+  color: var(--text-h);
+}
+
+.tooltip-bills-list {
+  border-top: 1px dashed var(--border);
+  margin-top: 0.4rem;
+  padding-top: 0.4rem;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.tooltip-bill-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--text);
+  margin-bottom: 0.15rem;
+}
+
+.bill-item-name {
+  max-width: 110px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bill-item-val {
+  font-weight: 600;
+}
+
+/* Comparison Table */
+.comparison-table-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+.comparison-table-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-h);
+  margin-bottom: 1rem;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.comparison-table th {
+  text-align: left;
+  padding: 0.75rem;
+  border-bottom: 2px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.comparison-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.875rem;
+  color: var(--text);
+}
+
+.comparison-table tr:hover td {
+  background: var(--code-bg);
+}
+
+.current-month-row td {
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.table-current-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  padding: 2px 6px;
+  border-radius: 8px;
+  margin-left: 0.5rem;
+  font-weight: 700;
+}
+
+.amount-col {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.comparison-table th.amount-col {
+  text-align: right;
+}
+
+.text-danger {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.text-success {
+  color: #10b981;
+  font-weight: 600;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 4px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+
 .text-muted {
   color: var(--text);
   opacity: 0.5;

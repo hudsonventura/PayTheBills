@@ -80,3 +80,18 @@ public record BillExecutionResponse(
     string? Notes,
     DateTime CreatedAtUtc
 );
+
+public record MonthlyBillSpendingDto(
+    Guid BillId,
+    string BillTitle,
+    decimal PaidAmount,
+    decimal ExpectedAmount
+);
+
+public record MonthlySpendingDto(
+    int Year,
+    int Month,
+    decimal TotalPaid,
+    decimal TotalExpected,
+    IReadOnlyList<MonthlyBillSpendingDto> Bills
+);

@@ -83,6 +83,21 @@ export interface OccurrencesFilterParams {
   refDate?: string;
 }
 
+export interface MonthlyBillSpending {
+  billId: string;
+  billTitle: string;
+  paidAmount: number;
+  expectedAmount: number;
+}
+
+export interface MonthlySpending {
+  year: number;
+  month: number;
+  totalPaid: number;
+  totalExpected: number;
+  bills: MonthlyBillSpending[];
+}
+
 const TOKEN_KEY = 'paythebills_auth_token';
 
 export const getAuthToken = (): string | null => {
@@ -226,5 +241,16 @@ export const api = {
       headers: getHeaders(),
     });
     return handleResponse<void>(res);
+  },
+
+  async getMonthlySpending(months = 6, refDate?: string): Promise<MonthlySpending[]> {
+    const query = new URLSearchParams();
+    query.set('months', months.toString());
+    if (refDate) query.set('refDate', refDate);
+
+    const res = await fetch(`/api/bills/monthly-spending?${query.toString()}`, {
+      headers: getHeaders(),
+    });
+    return handleResponse<MonthlySpending[]>(res);
   },
 };

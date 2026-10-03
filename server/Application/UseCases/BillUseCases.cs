@@ -179,6 +179,77 @@ public class BillUseCases
         await _context.SaveChangesAsync(ct);
     }
 
+    public async Task<IReadOnlyList<MonthlySpendingDto>> GetMonthlySpendingAsync(
+        Guid userId,
+        int months = 6,
+        DateOnly? referenceDate = null,
+        CancellationToken ct = default)
+    {
+        var refDate = referenceDate ?? DateOnly.FromDateTime(DateTime.Today);
+        var bills = await _context.Bills
+            .Where(b => b.UserId == userId)
+            .Include(b => b.Executions)
+            .OrderBy(b => b.Title)
+            .ToListAsync(ct);
+
+        var count = Math.Clamp(months, 1, 24);
+        var result = new List<MonthlySpendingDto>();
+
+        var startMonthDateTime = new DateTime(refDate.Year, refDate.Month, 1).AddMonths(-(count - 1));
+
+        for (int i = 0; i < count; i++)
+        {
+            var currentMonthDate = startMonthDateTime.AddMonths(i);
+            int year = currentMonthDate.Year;
+            int month = currentMonthDate.Month;
+
+            var filter = new BillFilter(BillFilterType.Month, Year: year, Month: month);
+            var billItems = new List<MonthlyBillSpendingDto>();
+            decimal monthTotalPaid = 0;
+            decimal monthTotalExpected = 0;
+
+            foreach (var bill in bills)
+            {
+                var occurrences = _recurrenceCalculator.CalculateOccurrences(bill, filter, refDate);
+
+                var matchedExecutionIds = occurrences
+                    .Where(o => o.ExecutionId.HasValue)
+                    .Select(o => o.ExecutionId!.Value)
+                    .ToHashSet();
+
+                decimal billPaid = occurrences.Where(o => o.IsPaid).Sum(o => o.PaidAmount ?? o.ExpectedAmount);
+                decimal billExpected = occurrences.Sum(o => o.ExpectedAmount);
+
+                var extraExecutions = bill.Executions
+                    .Where(e => !matchedExecutionIds.Contains(e.Id) &&
+                                e.PaymentDate.Year == year && e.PaymentDate.Month == month)
+                    .ToList();
+
+                billPaid += extraExecutions.Sum(e => e.PaidAmount);
+
+                billItems.Add(new MonthlyBillSpendingDto(
+                    BillId: bill.Id,
+                    BillTitle: bill.Title,
+                    PaidAmount: billPaid,
+                    ExpectedAmount: billExpected
+                ));
+
+                monthTotalPaid += billPaid;
+                monthTotalExpected += billExpected;
+            }
+
+            result.Add(new MonthlySpendingDto(
+                Year: year,
+                Month: month,
+                TotalPaid: monthTotalPaid,
+                TotalExpected: monthTotalExpected,
+                Bills: billItems
+            ));
+        }
+
+        return result;
+    }
+
     private static BillResponse ToBillResponse(Bill b) => new(
         Id: b.Id,
         UserId: b.UserId,

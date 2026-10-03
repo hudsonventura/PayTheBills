@@ -5,8 +5,8 @@ import { type User } from '../api';
 interface NavbarProps {
   user: User | null;
   language: Language;
-  currentView: 'executions' | 'bills';
-  onViewChange: (view: 'executions' | 'bills') => void;
+  currentView: 'executions' | 'bills' | 'comparison';
+  onViewChange: (view: 'executions' | 'bills' | 'comparison') => void;
   onLanguageChange: (lang: Language) => void;
   onLogout: () => void;
 }
@@ -26,7 +26,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       <div className="navbar-left">
         <div className="navbar-brand">
           <div className="navbar-logo">
-            <img src="/icon.svg" alt="PayTheBills" width="30" height="30" />
+            <img src="/favicon.svg" alt="PayTheBills" width="30" height="30" />
           </div>
           <div>
             <span className="navbar-title">{t.appTitle}</span>
@@ -49,6 +49,13 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => onViewChange('bills')}
             >
               📝 {t.navBills}
+            </button>
+            <button
+              type="button"
+              className={`nav-tab-btn ${currentView === 'comparison' ? 'active' : ''}`}
+              onClick={() => onViewChange('comparison')}
+            >
+              📊 {t.navComparison}
             </button>
           </nav>
         )}
