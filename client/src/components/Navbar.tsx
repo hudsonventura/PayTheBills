@@ -26,7 +26,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       <div className="navbar-left">
         <div className="navbar-brand">
           <div className="navbar-logo">
-            <img src="/favicon.svg" alt="PayTheBills" width="30" height="30" />
+            <img src="/icon.svg" alt="PayTheBills" width="30" height="30" />
           </div>
           <div>
             <span className="navbar-title">{t.appTitle}</span>
