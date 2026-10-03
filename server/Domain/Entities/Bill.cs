@@ -41,7 +41,7 @@ public class Bill
         int? intervalMonths = null,
         string? notes = null,
         DateTime? createdAtUtc = null,
-        string? PaymentLink = null)
+        string? paymentLink = null)
     {
         if (id == Guid.Empty)
             throw new ArgumentException("Bill ID cannot be empty.", nameof(id));
@@ -69,7 +69,46 @@ public class Bill
         IntervalMonths = intervalMonths;
         Notes = notes?.Trim();
         CreatedAtUtc = createdAtUtc ?? DateTime.UtcNow;
-        PaymentLink = PaymentLink;
+        PaymentLink = string.IsNullOrWhiteSpace(paymentLink) ? null : paymentLink.Trim();
+    }
+
+    public void Update(
+        string title,
+        decimal expectedAmount,
+        BillFrequency frequency,
+        DateOnly startDate,
+        DateOnly? dueDate = null,
+        int? dayOfMonth = null,
+        int? monthOfYear = null,
+        int? intervalMonths = null,
+        string? notes = null,
+        string? paymentLink = null)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+            throw new ArgumentException("Title cannot be empty.", nameof(title));
+
+        if (expectedAmount < 0)
+            throw new ArgumentOutOfRangeException(nameof(expectedAmount), "Expected amount cannot be negative.");
+
+        ValidateFrequencyParameters(frequency, startDate, dueDate, dayOfMonth, monthOfYear, intervalMonths);
+
+        Title = title.Trim();
+        ExpectedAmount = expectedAmount;
+        Frequency = frequency;
+        StartDate = startDate;
+        DueDate = dueDate;
+        DayOfMonth = dayOfMonth;
+        MonthOfYear = monthOfYear;
+        IntervalMonths = intervalMonths;
+        Notes = notes?.Trim();
+        PaymentLink = string.IsNullOrWhiteSpace(paymentLink) ? null : paymentLink.Trim();
+        UpdatedAtUtc = DateTime.UtcNow;
+    }
+
+    public void UpdatePaymentLink(string? paymentLink)
+    {
+        PaymentLink = string.IsNullOrWhiteSpace(paymentLink) ? null : paymentLink.Trim();
+        UpdatedAtUtc = DateTime.UtcNow;
     }
 
     private static void ValidateFrequencyParameters(

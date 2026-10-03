@@ -34,6 +34,22 @@ export interface BillOccurrence {
   paymentLink?: string | null;
 }
 
+export interface Bill {
+  id: string;
+  userId: string;
+  title: string;
+  expectedAmount: number;
+  frequency: BillFrequency;
+  startDate: string;
+  dueDate?: string | null;
+  dayOfMonth?: number | null;
+  monthOfYear?: number | null;
+  intervalMonths?: number | null;
+  notes?: string | null;
+  paymentLink?: string | null;
+  createdAtUtc: string;
+}
+
 export interface CreateBillPayload {
   title: string;
   expectedAmount: number;
@@ -46,6 +62,8 @@ export interface CreateBillPayload {
   notes?: string | null;
   paymentLink?: string | null;
 }
+
+export type UpdateBillPayload = CreateBillPayload;
 
 export interface RegisterExecutionPayload {
   paymentDate: string;
@@ -150,13 +168,36 @@ export const api = {
     return handleResponse<BillOccurrence[]>(res);
   },
 
-  async createBill(data: CreateBillPayload): Promise<unknown> {
+  async getBills(): Promise<Bill[]> {
+    const res = await fetch('/api/bills/list', {
+      headers: getHeaders(),
+    });
+    return handleResponse<Bill[]>(res);
+  },
+
+  async getBillById(billId: string): Promise<Bill> {
+    const res = await fetch(`/api/bills/${billId}`, {
+      headers: getHeaders(),
+    });
+    return handleResponse<Bill>(res);
+  },
+
+  async createBill(data: CreateBillPayload): Promise<Bill> {
     const res = await fetch('/api/bills', {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify(data),
     });
-    return handleResponse<unknown>(res);
+    return handleResponse<Bill>(res);
+  },
+
+  async updateBill(billId: string, data: UpdateBillPayload): Promise<Bill> {
+    const res = await fetch(`/api/bills/${billId}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    return handleResponse<Bill>(res);
   },
 
   async registerExecution(billId: string, data: RegisterExecutionPayload): Promise<unknown> {

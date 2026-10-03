@@ -20,6 +20,10 @@ Voce e o agente responsavel pelas regras de negocio do PayTheBills. Este arquivo
   - Cada conta pode possuir opcionalmente um link (`PaymentLink`) para eventual geração ou visualização do boleto/pagamento da conta.
   - O campo é opcional (pode ser nulo ou vazio). Quando informado, o valor tem tamanho máximo de 1000 caracteres.
   - O link é persistido na entidade `Bill` (tabela `bills`), propagado nas ocorrências calculadas (`BillOccurrence`) e exibido na interface para facilitar a geração/pagamento do boleto.
+- **BR-BILL-02 (Contas vs Execuções e Ocorrências Virtuais)**:
+  - O cadastro de contas (`Bill`) é persistido no banco de dados e representa as definições/recorrências de compromissos financeiros. Suporta operações de CRUD (criação, listagem, atualização e exclusão).
+  - As pendências/ocorrências de pagamento (`BillOccurrence`) são virtuais: são calculadas dinamicamente sob demanda com base nas regras de recorrência e não existem fisicamente na base de dados.
+  - Somente quando uma ocorrência é paga (executada), cria-se um registro concreto no banco de dados na tabela de execuções (`bill_executions`). A tela principal destina-se ao acompanhamento dessas execuções/pagamentos, enquanto o cadastro e gestão de contas ocorre em tela própria.
 
 ## Protocolo obrigatorio para mudancas de regra
 

@@ -65,6 +65,20 @@ public static class BillEndpoints
             return Results.Ok(bills);
         });
 
+        // Get bill by id
+        group.MapGet("/{billId:guid}", async (
+            ClaimsPrincipal user,
+            Guid billId,
+            BillUseCases billUseCases,
+            CancellationToken ct) =>
+        {
+            var userId = GetUserId(user);
+            if (userId == null) return Results.Unauthorized();
+
+            var bill = await billUseCases.GetBillByIdAsync(userId.Value, billId, ct);
+            return bill == null ? Results.NotFound() : Results.Ok(bill);
+        });
+
         // Create a new bill
         group.MapPost("/", async (
             ClaimsPrincipal user,
@@ -79,6 +93,32 @@ public static class BillEndpoints
             {
                 var bill = await billUseCases.CreateBillAsync(userId.Value, request, ct);
                 return Results.Created($"/api/bills/{bill.Id}", bill);
+            }
+            catch (ArgumentException ex)
+            {
+                return Results.BadRequest(new { message = ex.Message });
+            }
+        });
+
+        // Update an existing bill
+        group.MapPut("/{billId:guid}", async (
+            ClaimsPrincipal user,
+            Guid billId,
+            UpdateBillRequest request,
+            BillUseCases billUseCases,
+            CancellationToken ct) =>
+        {
+            var userId = GetUserId(user);
+            if (userId == null) return Results.Unauthorized();
+
+            try
+            {
+                var bill = await billUseCases.UpdateBillAsync(userId.Value, billId, request, ct);
+                return Results.Ok(bill);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return Results.NotFound(new { message = ex.Message });
             }
             catch (ArgumentException ex)
             {

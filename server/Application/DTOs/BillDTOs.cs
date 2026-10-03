@@ -17,6 +17,20 @@ public record CreateBillRequest(
     string? BoletoUrl = null
 );
 
+public record UpdateBillRequest(
+    string Title,
+    decimal ExpectedAmount,
+    BillFrequency Frequency,
+    DateOnly StartDate,
+    DateOnly? DueDate = null,
+    int? DayOfMonth = null,
+    int? MonthOfYear = null,
+    int? IntervalMonths = null,
+    string? Notes = null,
+    string? PaymentLink = null,
+    string? BoletoUrl = null
+);
+
 public record BillResponse(
     Guid Id,
     Guid UserId,

@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { type Language, translations, formatCurrency, formatDate } from '../i18n';
 import { api, type BillOccurrence, BillFrequency, type OccurrencesFilterParams } from '../api';
-import { BillModal } from './BillModal';
 import { PaymentModal } from './PaymentModal';
 
 interface BillsListProps {
   language: Language;
+  onNavigateToBills?: () => void;
 }
 
-export const BillsList: React.FC<BillsListProps> = ({ language }) => {
+export const BillsList: React.FC<BillsListProps> = ({ language, onNavigateToBills }) => {
   const t = translations[language];
 
   const [dateInfo] = useState(() => {
@@ -32,7 +32,6 @@ export const BillsList: React.FC<BillsListProps> = ({ language }) => {
   const [error, setError] = useState<string | null>(null);
 
   // Modals
-  const [isBillModalOpen, setIsBillModalOpen] = useState(false);
   const [selectedOccurrenceForPayment, setSelectedOccurrenceForPayment] = useState<BillOccurrence | null>(null);
 
   const fetchOccurrences = useCallback(async () => {
@@ -85,25 +84,6 @@ export const BillsList: React.FC<BillsListProps> = ({ language }) => {
     fetchOccurrences();
   }, [fetchOccurrences]);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Shortcut: Ctrl+Shift++ (or Cmd+Shift++)
-      const isCtrl = e.ctrlKey || e.metaKey;
-      const isShift = e.shiftKey;
-      const isPlus = e.key === '+' || e.code === 'NumpadAdd' || (e.code === 'Equal' && isShift);
-
-      if (isCtrl && isShift && isPlus) {
-        e.preventDefault();
-        setIsBillModalOpen(true);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
-
   const handleUndoPayment = async (occurrence: BillOccurrence) => {
     if (!occurrence.executionId) return;
     if (!window.confirm(t.confirmUndoPayment)) return;
@@ -113,17 +93,6 @@ export const BillsList: React.FC<BillsListProps> = ({ language }) => {
       fetchOccurrences();
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : 'Error undoing payment');
-    }
-  };
-
-  const handleDeleteBill = async (billId: string) => {
-    if (!window.confirm(t.confirmDeleteBill)) return;
-
-    try {
-      await api.deleteBill(billId);
-      fetchOccurrences();
-    } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Error deleting bill');
     }
   };
 
@@ -165,25 +134,16 @@ export const BillsList: React.FC<BillsListProps> = ({ language }) => {
 
   return (
     <div className="bills-container">
-      {/* Top Header & New Bill button */}
+      {/* Top Header */}
       <div className="bills-header">
         <div className="bills-title-wrapper">
-          <h2>{t.billsTitle}</h2>
+          <h2>{t.executionsTitle}</h2>
           <p className="bills-subtitle">
             {filterType === 'none' && t.filterNone}
             {filterType === 'month' && `${t.filterMonth}: ${t.months[selectedMonth - 1]} / ${selectedYear}`}
             {filterType === 'next_days' && `${t.filterNextDays}: ${selectedDays} ${t.daysCount.toLowerCase()}`}
           </p>
         </div>
-        <button
-          type="button"
-          className="btn btn-primary btn-new-bill"
-          onClick={() => setIsBillModalOpen(true)}
-          title={`${t.newBillBtn} (${t.newBillShortcutHint})`}
-        >
-          <span>{t.newBillBtn}</span>
-          <kbd className="shortcut-kbd">Ctrl+Shift++</kbd>
-        </button>
       </div>
 
       {/* Filter Section */}
@@ -303,14 +263,15 @@ export const BillsList: React.FC<BillsListProps> = ({ language }) => {
         ) : occurrences.length === 0 ? (
           <div className="empty-state">
             <p className="empty-title">{t.noBillsFound}</p>
-            <p className="empty-hint">{t.noBillsPrompt}</p>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={() => setIsBillModalOpen(true)}
-            >
-              {t.newBillBtn}
-            </button>
+            {onNavigateToBills && (
+              <button
+                type="button"
+                className="btn btn-outline"
+                onClick={onNavigateToBills}
+              >
+                {t.goToBills}
+              </button>
+            )}
           </div>
         ) : (
           <div className="occurrence-list">
@@ -425,15 +386,6 @@ export const BillsList: React.FC<BillsListProps> = ({ language }) => {
                           {t.undoPayAction}
                         </button>
                       )}
-
-                      <button
-                        type="button"
-                        className="btn btn-xs btn-danger-outline"
-                        onClick={() => handleDeleteBill(occ.billId)}
-                        title={t.deleteBillAction}
-                      >
-                        🗑️
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -442,15 +394,6 @@ export const BillsList: React.FC<BillsListProps> = ({ language }) => {
           </div>
         )}
       </div>
-
-      {/* Bill creation modal */}
-      {isBillModalOpen && (
-        <BillModal
-          language={language}
-          onClose={() => setIsBillModalOpen(false)}
-          onCreated={fetchOccurrences}
-        />
-      )}
 
       {/* Payment registration modal */}
       {selectedOccurrenceForPayment && (

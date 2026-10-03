@@ -21,8 +21,37 @@ export const translations = {
     logout: 'Sair',
     welcomeUser: 'Olá, {name}',
 
-    // Bills & Recurrences
-    billsTitle: 'Suas Contas e Promessas de Pagamento',
+    // Navigation
+    navExecutions: 'Execuções',
+    navBills: 'Contas',
+
+    // Executions View
+    executionsTitle: 'Execuções de Pagamento',
+    executionsSubtitle: 'Acompanhamento e baixa das ocorrências de contas',
+
+    // Bills Management (CRUD)
+    billsManagementTitle: 'Cadastro de Contas',
+    billsManagementSubtitle: 'Gerenciamento de contas e regras de recorrência',
+    billsTableTitle: 'Título',
+    billsTableExpectedAmount: 'Valor Esperado',
+    billsTableFrequency: 'Frequência',
+    billsTableRule: 'Regra de Vencimento',
+    billsTableStartDate: 'Início',
+    billsTablePaymentLink: 'Boleto / Link',
+    billsTableNotes: 'Observações',
+    billsTableActions: 'Ações',
+    noBillsRegistered: 'Nenhuma conta cadastrada.',
+    noBillsRegisteredPrompt: 'Clique em "+ Nova Conta" para cadastrar sua primeira conta recorrente ou pontual!',
+    ruleMonthly: 'Dia {day} de cada mês',
+    ruleEveryNMonths: 'A cada {interval} meses no dia {day}',
+    ruleYearly: '{month}, dia {day}',
+    ruleOnce: 'Vence em {date}',
+    editBillAction: 'Editar Conta',
+    edit: 'Editar',
+    goToBills: 'Ir para Cadastro de Contas',
+
+    // Bills & Recurrences (Existing / occurrences)
+    billsTitle: 'Execuções de Pagamento',
     newBillBtn: '+ Nova Conta',
     filterLabel: 'Filtro de visualização:',
     filterNone: 'Sem filtro (Próximas 10 ocorrências de cada conta)',
@@ -115,8 +144,37 @@ export const translations = {
     logout: 'Log Out',
     welcomeUser: 'Hello, {name}',
 
+    // Navigation
+    navExecutions: 'Executions',
+    navBills: 'Bills',
+
+    // Executions View
+    executionsTitle: 'Payment Executions',
+    executionsSubtitle: 'Track and pay recurring and scheduled bills',
+
+    // Bills Management (CRUD)
+    billsManagementTitle: 'Bills Management',
+    billsManagementSubtitle: 'Manage recurring and one-time bill templates',
+    billsTableTitle: 'Title',
+    billsTableExpectedAmount: 'Expected Amount',
+    billsTableFrequency: 'Frequency',
+    billsTableRule: 'Due Rule',
+    billsTableStartDate: 'Start Date',
+    billsTablePaymentLink: 'Invoice / Link',
+    billsTableNotes: 'Notes',
+    billsTableActions: 'Actions',
+    noBillsRegistered: 'No bills registered yet.',
+    noBillsRegisteredPrompt: 'Click on "+ New Bill" to register your first bill template!',
+    ruleMonthly: 'Day {day} of every month',
+    ruleEveryNMonths: 'Every {interval} months on day {day}',
+    ruleYearly: '{month}, day {day}',
+    ruleOnce: 'Due on {date}',
+    editBillAction: 'Edit Bill',
+    edit: 'Edit',
+    goToBills: 'Go to Bills Management',
+
     // Bills & Recurrences
-    billsTitle: 'Your Bills & Payment Promises',
+    billsTitle: 'Payment Executions',
     newBillBtn: '+ New Bill',
     filterLabel: 'View filter:',
     filterNone: 'No filter (Next 10 recurrences of each bill)',

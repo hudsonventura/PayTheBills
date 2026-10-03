@@ -148,4 +148,66 @@ public class BillEntityTests
         Assert.Equal("https://concessionaria.com/boleto/999", bill.PaymentLink);
         Assert.NotNull(bill.UpdatedAtUtc);
     }
+
+    [Fact]
+    public void Update_ModifiesPropertiesAndSetsUpdatedAtUtc()
+    {
+        var bill = new Bill(
+            id: Guid.NewGuid(),
+            userId: _userId,
+            title: "Electricity",
+            expectedAmount: 150m,
+            frequency: BillFrequency.Monthly,
+            startDate: new DateOnly(2026, 1, 1),
+            dayOfMonth: 10
+        );
+
+        bill.Update(
+            title: "Updated Electricity",
+            expectedAmount: 200m,
+            frequency: BillFrequency.Monthly,
+            startDate: new DateOnly(2026, 2, 1),
+            dayOfMonth: 15,
+            notes: "New notes",
+            paymentLink: "https://newlink.com"
+        );
+
+        Assert.Equal("Updated Electricity", bill.Title);
+        Assert.Equal(200m, bill.ExpectedAmount);
+        Assert.Equal(new DateOnly(2026, 2, 1), bill.StartDate);
+        Assert.Equal(15, bill.DayOfMonth);
+        Assert.Equal("New notes", bill.Notes);
+        Assert.Equal("https://newlink.com", bill.PaymentLink);
+        Assert.NotNull(bill.UpdatedAtUtc);
+    }
+
+    [Fact]
+    public void Update_ThrowsException_WhenInvalidParameters()
+    {
+        var bill = new Bill(
+            id: Guid.NewGuid(),
+            userId: _userId,
+            title: "Electricity",
+            expectedAmount: 150m,
+            frequency: BillFrequency.Monthly,
+            startDate: new DateOnly(2026, 1, 1),
+            dayOfMonth: 10
+        );
+
+        Assert.Throws<ArgumentException>(() => bill.Update(
+            title: "",
+            expectedAmount: 100m,
+            frequency: BillFrequency.Monthly,
+            startDate: new DateOnly(2026, 1, 1),
+            dayOfMonth: 10
+        ));
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => bill.Update(
+            title: "Valid",
+            expectedAmount: -10m,
+            frequency: BillFrequency.Monthly,
+            startDate: new DateOnly(2026, 1, 1),
+            dayOfMonth: 10
+        ));
+    }
 }

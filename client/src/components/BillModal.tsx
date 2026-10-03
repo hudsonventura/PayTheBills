@@ -1,32 +1,34 @@
 import React, { useState } from 'react';
 import { type Language, translations } from '../i18n';
-import { api, BillFrequency, type CreateBillPayload } from '../api';
+import { api, BillFrequency, type CreateBillPayload, type Bill } from '../api';
 
 const getTodayStr = (): string => new Date().toISOString().split('T')[0];
 
 interface BillModalProps {
+  bill?: Bill | null;
   language: Language;
   onClose: () => void;
-  onCreated: () => void;
+  onSaved: () => void;
 }
 
 export const BillModal: React.FC<BillModalProps> = ({
+  bill,
   language,
   onClose,
-  onCreated,
+  onSaved,
 }) => {
   const t = translations[language];
 
-  const [title, setTitle] = useState('');
-  const [expectedAmount, setExpectedAmount] = useState('');
-  const [frequency, setFrequency] = useState<BillFrequency>(BillFrequency.Monthly);
-  const [startDate, setStartDate] = useState(getTodayStr);
-  const [dueDate, setDueDate] = useState(getTodayStr);
-  const [dayOfMonth, setDayOfMonth] = useState<number>(10);
-  const [intervalMonths, setIntervalMonths] = useState<number>(3);
-  const [monthOfYear, setMonthOfYear] = useState<number>(1);
-  const [notes, setNotes] = useState('');
-  const [paymentLink, setPaymentLink] = useState('');
+  const [title, setTitle] = useState(() => bill?.title ?? '');
+  const [expectedAmount, setExpectedAmount] = useState(() => bill ? bill.expectedAmount.toString() : '');
+  const [frequency, setFrequency] = useState<BillFrequency>(() => bill?.frequency ?? BillFrequency.Monthly);
+  const [startDate, setStartDate] = useState(() => bill?.startDate ?? getTodayStr());
+  const [dueDate, setDueDate] = useState(() => bill?.dueDate ?? getTodayStr());
+  const [dayOfMonth, setDayOfMonth] = useState<number>(() => bill?.dayOfMonth ?? 10);
+  const [intervalMonths, setIntervalMonths] = useState<number>(() => bill?.intervalMonths ?? 3);
+  const [monthOfYear, setMonthOfYear] = useState<number>(() => bill?.monthOfYear ?? 1);
+  const [notes, setNotes] = useState(() => bill?.notes ?? '');
+  const [paymentLink, setPaymentLink] = useState(() => bill?.paymentLink ?? '');
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -94,14 +96,18 @@ export const BillModal: React.FC<BillModalProps> = ({
     setLoading(true);
 
     try {
-      await api.createBill(payload);
-      onCreated();
+      if (bill) {
+        await api.updateBill(bill.id, payload);
+      } else {
+        await api.createBill(payload);
+      }
+      onSaved();
       onClose();
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError(language === 'pt' ? 'Erro ao criar conta.' : 'Error creating bill.');
+        setError(language === 'pt' ? 'Erro ao salvar conta.' : 'Error saving bill.');
       }
     } finally {
       setLoading(false);
@@ -112,7 +118,7 @@ export const BillModal: React.FC<BillModalProps> = ({
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal-dialog" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
         <div className="modal-header">
-          <h3>{t.createBillTitle}</h3>
+          <h3>{bill ? t.editBillTitle : t.createBillTitle}</h3>
           <button type="button" className="btn-close" onClick={onClose} aria-label="Close">
             ✕
           </button>

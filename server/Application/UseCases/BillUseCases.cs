@@ -33,10 +33,44 @@ public class BillUseCases
             monthOfYear: request.MonthOfYear,
             intervalMonths: request.IntervalMonths,
             notes: request.Notes,
-            PaymentLink: request.PaymentLink ?? request.BoletoUrl
+            paymentLink: request.PaymentLink ?? request.BoletoUrl
         );
 
         _context.Bills.Add(bill);
+        await _context.SaveChangesAsync(ct);
+
+        return ToBillResponse(bill);
+    }
+
+    public async Task<BillResponse?> GetBillByIdAsync(Guid userId, Guid billId, CancellationToken ct = default)
+    {
+        var bill = await _context.Bills
+            .FirstOrDefaultAsync(b => b.Id == billId && b.UserId == userId, ct);
+
+        return bill == null ? null : ToBillResponse(bill);
+    }
+
+    public async Task<BillResponse> UpdateBillAsync(Guid userId, Guid billId, UpdateBillRequest request, CancellationToken ct = default)
+    {
+        var bill = await _context.Bills
+            .FirstOrDefaultAsync(b => b.Id == billId && b.UserId == userId, ct);
+
+        if (bill == null)
+            throw new KeyNotFoundException("Bill not found or does not belong to this user.");
+
+        bill.Update(
+            title: request.Title,
+            expectedAmount: request.ExpectedAmount,
+            frequency: request.Frequency,
+            startDate: request.StartDate,
+            dueDate: request.DueDate,
+            dayOfMonth: request.DayOfMonth,
+            monthOfYear: request.MonthOfYear,
+            intervalMonths: request.IntervalMonths,
+            notes: request.Notes,
+            paymentLink: request.PaymentLink ?? request.BoletoUrl
+        );
+
         await _context.SaveChangesAsync(ct);
 
         return ToBillResponse(bill);
