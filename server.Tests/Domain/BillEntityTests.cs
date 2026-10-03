@@ -210,4 +210,76 @@ public class BillEntityTests
             dayOfMonth: 10
         ));
     }
+
+    [Fact]
+    public void Constructor_Throws_WhenWeeklyHasNoDayOfWeek()
+    {
+        Assert.Throws<ArgumentException>(() => new Bill(
+            id: Guid.NewGuid(),
+            userId: _userId,
+            title: "Cleaning Service",
+            expectedAmount: 120m,
+            frequency: BillFrequency.Weekly,
+            startDate: new DateOnly(2026, 1, 1),
+            dayOfWeek: null
+        ));
+    }
+
+    [Fact]
+    public void Constructor_Throws_WhenWeeklyDayOfWeekIsOutOfRange()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new Bill(
+            id: Guid.NewGuid(),
+            userId: _userId,
+            title: "Gardener",
+            expectedAmount: 150m,
+            frequency: BillFrequency.Weekly,
+            startDate: new DateOnly(2026, 1, 1),
+            dayOfWeek: (DayOfWeek)7
+        ));
+    }
+
+    [Fact]
+    public void Constructor_CreatesWeeklyBill_WithValidDayOfWeek()
+    {
+        var bill = new Bill(
+            id: Guid.NewGuid(),
+            userId: _userId,
+            title: "Yoga Class",
+            expectedAmount: 80m,
+            frequency: BillFrequency.Weekly,
+            startDate: new DateOnly(2026, 10, 1),
+            dayOfWeek: DayOfWeek.Friday
+        );
+
+        Assert.Equal(BillFrequency.Weekly, bill.Frequency);
+        Assert.Equal(DayOfWeek.Friday, bill.DayOfWeek);
+    }
+
+    [Fact]
+    public void Update_ToWeekly_SetsDayOfWeekAndUpdatedAtUtc()
+    {
+        var bill = new Bill(
+            id: Guid.NewGuid(),
+            userId: _userId,
+            title: "Old Bill",
+            expectedAmount: 100m,
+            frequency: BillFrequency.Monthly,
+            startDate: new DateOnly(2026, 1, 1),
+            dayOfMonth: 10
+        );
+
+        bill.Update(
+            title: "Weekly Service",
+            expectedAmount: 75m,
+            frequency: BillFrequency.Weekly,
+            startDate: new DateOnly(2026, 2, 1),
+            dayOfWeek: DayOfWeek.Wednesday
+        );
+
+        Assert.Equal(BillFrequency.Weekly, bill.Frequency);
+        Assert.Equal(DayOfWeek.Wednesday, bill.DayOfWeek);
+        Assert.Null(bill.DayOfMonth);
+        Assert.NotNull(bill.UpdatedAtUtc);
+    }
 }

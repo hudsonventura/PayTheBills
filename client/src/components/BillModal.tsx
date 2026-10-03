@@ -25,6 +25,7 @@ export const BillModal: React.FC<BillModalProps> = ({
   const [startDate, setStartDate] = useState(() => bill?.startDate ?? getTodayStr());
   const [dueDate, setDueDate] = useState(() => bill?.dueDate ?? getTodayStr());
   const [dayOfMonth, setDayOfMonth] = useState<number>(() => bill?.dayOfMonth ?? 10);
+  const [dayOfWeek, setDayOfWeek] = useState<number>(() => bill?.dayOfWeek ?? 1);
   const [intervalMonths, setIntervalMonths] = useState<number>(() => bill?.intervalMonths ?? 3);
   const [monthOfYear, setMonthOfYear] = useState<number>(() => bill?.monthOfYear ?? 1);
   const [notes, setNotes] = useState(() => bill?.notes ?? '');
@@ -63,6 +64,12 @@ export const BillModal: React.FC<BillModalProps> = ({
         return;
       }
       payload.dueDate = dueDate;
+    } else if (frequency === BillFrequency.Weekly) {
+      if (dayOfWeek < 0 || dayOfWeek > 6) {
+        setError(language === 'pt' ? 'Dia da semana deve ser entre domingo e sábado.' : 'Day of week must be between Sunday and Saturday.');
+        return;
+      }
+      payload.dayOfWeek = dayOfWeek;
     } else if (frequency === BillFrequency.Monthly) {
       if (dayOfMonth < 1 || dayOfMonth > 31) {
         setError(language === 'pt' ? 'Dia do mês deve ser entre 1 e 31.' : 'Day of month must be between 1 and 31.');
@@ -170,6 +177,7 @@ export const BillModal: React.FC<BillModalProps> = ({
                 onChange={(e) => setFrequency(Number(e.target.value) as BillFrequency)}
               >
                 <option value={BillFrequency.Once}>{t.freqOnce}</option>
+                <option value={BillFrequency.Weekly}>{t.freqWeekly}</option>
                 <option value={BillFrequency.Monthly}>{t.freqMonthly}</option>
                 <option value={BillFrequency.EveryNMonths}>{t.freqEveryNMonths}</option>
                 <option value={BillFrequency.Yearly}>{t.freqYearly}</option>
@@ -201,6 +209,24 @@ export const BillModal: React.FC<BillModalProps> = ({
                 onChange={(e) => setDueDate(e.target.value)}
                 required
               />
+            </div>
+          )}
+
+          {frequency === BillFrequency.Weekly && (
+            <div className="form-group">
+              <label htmlFor="bill-day-week">{t.dayOfWeek}</label>
+              <select
+                id="bill-day-week"
+                className="form-control"
+                value={dayOfWeek}
+                onChange={(e) => setDayOfWeek(parseInt(e.target.value, 10))}
+              >
+                {t.daysOfWeek.map((dayName, idx) => (
+                  <option key={idx} value={idx}>
+                    {dayName}
+                  </option>
+                ))}
+              </select>
             </div>
           )}
 

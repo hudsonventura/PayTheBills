@@ -45,6 +45,7 @@ export const translations = {
     ruleMonthly: 'Dia {day} de cada mês',
     ruleEveryNMonths: 'A cada {interval} meses no dia {day}',
     ruleYearly: '{month}, dia {day}',
+    ruleWeekly: 'Semanalmente ({day})',
     ruleOnce: 'Vence em {date}',
     editBillAction: 'Editar Conta',
     edit: 'Editar',
@@ -72,9 +73,11 @@ export const translations = {
     freqMonthly: 'Mensal (em dia específico do mês)',
     freqEveryNMonths: 'A cada N meses (em dia específico)',
     freqYearly: 'Anual',
+    freqWeekly: 'Semanal (em dia específico da semana)',
     startDate: 'Data de início',
     dueDate: 'Data de vencimento',
     dayOfMonth: 'Dia do mês para vencimento (1 a 31)',
+    dayOfWeek: 'Dia da semana para vencimento',
     intervalMonths: 'Intervalo de meses (ex: 3 para trimestral)',
     monthOfYear: 'Mês do ano para vencimento',
     notes: 'Observações (opcional)',
@@ -116,6 +119,12 @@ export const translations = {
     months: [
       'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
       'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    ],
+
+    // Days of week (0 = Domingo to 6 = Sábado)
+    daysOfWeek: [
+      'Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira',
+      'Quinta-feira', 'Sexta-feira', 'Sábado'
     ],
 
     // Empty state & alerts
@@ -168,6 +177,7 @@ export const translations = {
     ruleMonthly: 'Day {day} of every month',
     ruleEveryNMonths: 'Every {interval} months on day {day}',
     ruleYearly: '{month}, day {day}',
+    ruleWeekly: 'Weekly ({day})',
     ruleOnce: 'Due on {date}',
     editBillAction: 'Edit Bill',
     edit: 'Edit',
@@ -195,9 +205,11 @@ export const translations = {
     freqMonthly: 'Monthly (on a specific day of month)',
     freqEveryNMonths: 'Every N months (on a specific day)',
     freqYearly: 'Yearly',
+    freqWeekly: 'Weekly (on a specific day of week)',
     startDate: 'Start date',
     dueDate: 'Due date',
     dayOfMonth: 'Due day of month (1 to 31)',
+    dayOfWeek: 'Due day of week',
     intervalMonths: 'Month interval (e.g. 3 for quarterly)',
     monthOfYear: 'Due month of the year',
     notes: 'Notes (optional)',
@@ -239,6 +251,12 @@ export const translations = {
     months: [
       'January', 'February', 'March', 'April', 'May', 'June',
       'July', 'August', 'September', 'October', 'November', 'December'
+    ],
+
+    // Days of week (0 = Sunday to 6 = Saturday)
+    daysOfWeek: [
+      'Sunday', 'Monday', 'Tuesday', 'Wednesday',
+      'Thursday', 'Friday', 'Saturday'
     ],
 
     // Empty state & alerts

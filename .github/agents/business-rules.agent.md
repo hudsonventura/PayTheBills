@@ -24,6 +24,11 @@ Voce e o agente responsavel pelas regras de negocio do PayTheBills. Este arquivo
   - O cadastro de contas (`Bill`) é persistido no banco de dados e representa as definições/recorrências de compromissos financeiros. Suporta operações de CRUD (criação, listagem, atualização e exclusão).
   - As pendências/ocorrências de pagamento (`BillOccurrence`) são virtuais: são calculadas dinamicamente sob demanda com base nas regras de recorrência e não existem fisicamente na base de dados.
   - Somente quando uma ocorrência é paga (executada), cria-se um registro concreto no banco de dados na tabela de execuções (`bill_executions`). A tela principal destina-se ao acompanhamento dessas execuções/pagamentos, enquanto o cadastro e gestão de contas ocorre em tela própria.
+- **BR-BILL-03 (Frequência Semanal e Dia da Semana)**:
+  - O sistema passa a suportar a frequência de pagamentos semanal (`Weekly`).
+  - Para contas com frequência semanal, é obrigatório informar o dia da semana (`DayOfWeek`) em que o pagamento acontecerá, admitindo valores de domingo a sábado (0 a 6, correspondendo a domingo = 0 até sábado = 6).
+  - Para contas que não possuam frequência semanal, o campo `DayOfWeek` não é aplicável e permanece nulo.
+  - O cálculo de ocorrências para contas semanais projeta as datas a cada 7 dias no dia da semana especificado a partir da data de início (`StartDate`), não gerando ocorrências com datas anteriores à data de início.
 
 ## Protocolo obrigatorio para mudancas de regra
 

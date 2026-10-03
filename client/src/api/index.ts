@@ -3,6 +3,7 @@ export const BillFrequency = {
   Monthly: 2,
   EveryNMonths: 3,
   Yearly: 4,
+  Weekly: 5,
 } as const;
 
 export type BillFrequency = (typeof BillFrequency)[keyof typeof BillFrequency];
@@ -45,6 +46,7 @@ export interface Bill {
   dayOfMonth?: number | null;
   monthOfYear?: number | null;
   intervalMonths?: number | null;
+  dayOfWeek?: number | null;
   notes?: string | null;
   paymentLink?: string | null;
   createdAtUtc: string;
@@ -59,6 +61,7 @@ export interface CreateBillPayload {
   dayOfMonth?: number | null;
   monthOfYear?: number | null;
   intervalMonths?: number | null;
+  dayOfWeek?: number | null;
   notes?: string | null;
   paymentLink?: string | null;
 }

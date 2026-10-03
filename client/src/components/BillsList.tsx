@@ -123,6 +123,8 @@ export const BillsList: React.FC<BillsListProps> = ({ language, onNavigateToBill
     switch (freq) {
       case BillFrequency.Once:
         return t.freqOnce;
+      case BillFrequency.Weekly:
+        return t.freqWeekly;
       case BillFrequency.Monthly:
         return t.freqMonthly;
       case BillFrequency.EveryNMonths:

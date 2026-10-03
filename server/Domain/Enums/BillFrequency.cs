@@ -5,5 +5,6 @@ public enum BillFrequency
     Once = 1,
     Monthly = 2,
     EveryNMonths = 3,
-    Yearly = 4
+    Yearly = 4,
+    Weekly = 5
 }

@@ -15,6 +15,7 @@ public class Bill
     public int? DayOfMonth { get; private set; }
     public int? MonthOfYear { get; private set; }
     public int? IntervalMonths { get; private set; }
+    public DayOfWeek? DayOfWeek { get; private set; }
 
     public string? PaymentLink { get; private set; }
 
@@ -41,7 +42,8 @@ public class Bill
         int? intervalMonths = null,
         string? notes = null,
         DateTime? createdAtUtc = null,
-        string? paymentLink = null)
+        string? paymentLink = null,
+        DayOfWeek? dayOfWeek = null)
     {
         if (id == Guid.Empty)
             throw new ArgumentException("Bill ID cannot be empty.", nameof(id));
@@ -55,7 +57,7 @@ public class Bill
         if (expectedAmount < 0)
             throw new ArgumentOutOfRangeException(nameof(expectedAmount), "Expected amount cannot be negative.");
 
-        ValidateFrequencyParameters(frequency, startDate, dueDate, dayOfMonth, monthOfYear, intervalMonths);
+        ValidateFrequencyParameters(frequency, startDate, dueDate, dayOfMonth, monthOfYear, intervalMonths, dayOfWeek);
 
         Id = id;
         UserId = userId;
@@ -67,6 +69,7 @@ public class Bill
         DayOfMonth = dayOfMonth;
         MonthOfYear = monthOfYear;
         IntervalMonths = intervalMonths;
+        DayOfWeek = frequency == BillFrequency.Weekly ? dayOfWeek : null;
         Notes = notes?.Trim();
         CreatedAtUtc = createdAtUtc ?? DateTime.UtcNow;
         PaymentLink = string.IsNullOrWhiteSpace(paymentLink) ? null : paymentLink.Trim();
@@ -82,7 +85,8 @@ public class Bill
         int? monthOfYear = null,
         int? intervalMonths = null,
         string? notes = null,
-        string? paymentLink = null)
+        string? paymentLink = null,
+        DayOfWeek? dayOfWeek = null)
     {
         if (string.IsNullOrWhiteSpace(title))
             throw new ArgumentException("Title cannot be empty.", nameof(title));
@@ -90,7 +94,7 @@ public class Bill
         if (expectedAmount < 0)
             throw new ArgumentOutOfRangeException(nameof(expectedAmount), "Expected amount cannot be negative.");
 
-        ValidateFrequencyParameters(frequency, startDate, dueDate, dayOfMonth, monthOfYear, intervalMonths);
+        ValidateFrequencyParameters(frequency, startDate, dueDate, dayOfMonth, monthOfYear, intervalMonths, dayOfWeek);
 
         Title = title.Trim();
         ExpectedAmount = expectedAmount;
@@ -100,6 +104,7 @@ public class Bill
         DayOfMonth = dayOfMonth;
         MonthOfYear = monthOfYear;
         IntervalMonths = intervalMonths;
+        DayOfWeek = frequency == BillFrequency.Weekly ? dayOfWeek : null;
         Notes = notes?.Trim();
         PaymentLink = string.IsNullOrWhiteSpace(paymentLink) ? null : paymentLink.Trim();
         UpdatedAtUtc = DateTime.UtcNow;
@@ -117,7 +122,8 @@ public class Bill
         DateOnly? dueDate,
         int? dayOfMonth,
         int? monthOfYear,
-        int? intervalMonths)
+        int? intervalMonths,
+        DayOfWeek? dayOfWeek)
     {
         switch (frequency)
         {
@@ -143,6 +149,13 @@ public class Bill
                     throw new ArgumentOutOfRangeException(nameof(monthOfYear), "Month of year must be between 1 and 12.");
                 if (!dayOfMonth.HasValue || dayOfMonth.Value < 1 || dayOfMonth.Value > 31)
                     throw new ArgumentOutOfRangeException(nameof(dayOfMonth), "Day of month must be between 1 and 31.");
+                break;
+
+            case BillFrequency.Weekly:
+                if (!dayOfWeek.HasValue)
+                    throw new ArgumentException("Day of week is required for weekly bills.", nameof(dayOfWeek));
+                if ((int)dayOfWeek.Value < 0 || (int)dayOfWeek.Value > 6)
+                    throw new ArgumentOutOfRangeException(nameof(dayOfWeek), "Day of week must be between Sunday (0) and Saturday (6).");
                 break;
 
             default:

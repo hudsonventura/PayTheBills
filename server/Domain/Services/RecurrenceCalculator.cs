@@ -154,6 +154,22 @@ public class RecurrenceCalculator : IRecurrenceCalculator
                     }
                 }
                 break;
+
+            case BillFrequency.Weekly:
+                var weeklyDay = bill.DayOfWeek ?? bill.StartDate.DayOfWeek;
+                var baseWeeklyDate = referenceDate >= bill.StartDate ? referenceDate : bill.StartDate;
+                var initialDiff = ((int)weeklyDay - (int)baseWeeklyDate.DayOfWeek + 7) % 7;
+                var nextWeeklyDate = baseWeeklyDate.AddDays(initialDiff);
+
+                while (result.Count < count)
+                {
+                    if (nextWeeklyDate >= bill.StartDate)
+                    {
+                        result.Add(nextWeeklyDate);
+                    }
+                    nextWeeklyDate = nextWeeklyDate.AddDays(7);
+                }
+                break;
         }
 
         return result;
@@ -219,6 +235,23 @@ public class RecurrenceCalculator : IRecurrenceCalculator
                     }
                 }
                 break;
+
+            case BillFrequency.Weekly:
+                var targetWeeklyDay = bill.DayOfWeek ?? bill.StartDate.DayOfWeek;
+                var firstDayOfMonthDate = new DateOnly(year, month, 1);
+                var startDayDate = firstDayOfMonthDate >= bill.StartDate ? firstDayOfMonthDate : bill.StartDate;
+                var diffDays = ((int)targetWeeklyDay - (int)startDayDate.DayOfWeek + 7) % 7;
+                var currentWeeklyDate = startDayDate.AddDays(diffDays);
+
+                while (currentWeeklyDate.Year == year && currentWeeklyDate.Month == month)
+                {
+                    if (currentWeeklyDate >= bill.StartDate)
+                    {
+                        result.Add(currentWeeklyDate);
+                    }
+                    currentWeeklyDate = currentWeeklyDate.AddDays(7);
+                }
+                break;
         }
 
         return result;
@@ -242,6 +275,7 @@ public class RecurrenceCalculator : IRecurrenceCalculator
             case BillFrequency.Monthly:
             case BillFrequency.EveryNMonths:
             case BillFrequency.Yearly:
+            case BillFrequency.Weekly:
                 // Scan the calendar months spanning referenceDate to endDate
                 var current = new DateTime(referenceDate.Year, referenceDate.Month, 1);
                 var endMonth = new DateTime(endDate.Year, endDate.Month, 1);

@@ -278,4 +278,150 @@ public class RecurrenceCalculatorTests
         Assert.NotEmpty(occurrences);
         Assert.All(occurrences, occ => Assert.Equal("https://energy.example.com/boleto/october", occ.PaymentLink));
     }
+
+    [Fact]
+    public void CalculateOccurrences_Weekly_WithoutFilter_GeneratesNext10RecurrencesOnGivenDayOfWeek()
+    {
+        // Arrange: Weekly on Friday (5), starting Oct 1, 2026 (Thursday)
+        var bill = new Bill(
+            id: Guid.NewGuid(),
+            userId: _userId,
+            title: "Weekly Grocery",
+            expectedAmount: 200m,
+            frequency: BillFrequency.Weekly,
+            startDate: new DateOnly(2026, 10, 1),
+            dayOfWeek: DayOfWeek.Friday
+        );
+
+        var filter = new BillFilter(BillFilterType.None);
+        var refDate = new DateOnly(2026, 10, 1);
+
+        // Act
+        var occurrences = _calculator.CalculateOccurrences(bill, filter, refDate);
+
+        // Assert
+        Assert.Equal(10, occurrences.Count);
+        Assert.Equal(new DateOnly(2026, 10, 2), occurrences[0].DueDate);
+        Assert.Equal(new DateOnly(2026, 10, 9), occurrences[1].DueDate);
+        Assert.Equal(new DateOnly(2026, 10, 16), occurrences[2].DueDate);
+        Assert.Equal(new DateOnly(2026, 10, 23), occurrences[3].DueDate);
+        Assert.Equal(new DateOnly(2026, 10, 30), occurrences[4].DueDate);
+        Assert.Equal(new DateOnly(2026, 11, 6), occurrences[5].DueDate);
+        Assert.Equal(new DateOnly(2026, 11, 13), occurrences[6].DueDate);
+        Assert.Equal(new DateOnly(2026, 11, 20), occurrences[7].DueDate);
+        Assert.Equal(new DateOnly(2026, 11, 27), occurrences[8].DueDate);
+        Assert.Equal(new DateOnly(2026, 12, 4), occurrences[9].DueDate);
+        Assert.All(occurrences, o => Assert.Equal(DayOfWeek.Friday, o.DueDate.DayOfWeek));
+    }
+
+    [Fact]
+    public void CalculateOccurrences_Weekly_DoesNotGenerateOccurrencesBeforeStartDate()
+    {
+        // Arrange: StartDate Oct 15, 2026 (Thursday), Weekly on Friday. RefDate is Oct 1, 2026.
+        var bill = new Bill(
+            id: Guid.NewGuid(),
+            userId: _userId,
+            title: "Pool Cleaning",
+            expectedAmount: 70m,
+            frequency: BillFrequency.Weekly,
+            startDate: new DateOnly(2026, 10, 15),
+            dayOfWeek: DayOfWeek.Friday
+        );
+
+        var filter = new BillFilter(BillFilterType.None);
+        var refDate = new DateOnly(2026, 10, 1);
+
+        // Act
+        var occurrences = _calculator.CalculateOccurrences(bill, filter, refDate);
+
+        // Assert: First occurrence is Oct 16 (since Oct 2 and Oct 9 are before StartDate)
+        Assert.Equal(new DateOnly(2026, 10, 16), occurrences[0].DueDate);
+        Assert.All(occurrences, o => Assert.True(o.DueDate >= bill.StartDate));
+    }
+
+    [Fact]
+    public void CalculateOccurrences_Weekly_MonthFilter_ReturnsOccurrencesOnlyForThatMonth()
+    {
+        // Arrange: Weekly on Friday starting Oct 1, 2026
+        var bill = new Bill(
+            id: Guid.NewGuid(),
+            userId: _userId,
+            title: "Gardening",
+            expectedAmount: 60m,
+            frequency: BillFrequency.Weekly,
+            startDate: new DateOnly(2026, 10, 1),
+            dayOfWeek: DayOfWeek.Friday
+        );
+
+        // October 2026 has 5 Fridays: 2, 9, 16, 23, 30
+        var filter = new BillFilter(BillFilterType.Month, Year: 2026, Month: 10);
+        var refDate = new DateOnly(2026, 10, 1);
+
+        // Act
+        var occurrences = _calculator.CalculateOccurrences(bill, filter, refDate);
+
+        // Assert
+        Assert.Equal(5, occurrences.Count);
+        Assert.Equal(new DateOnly(2026, 10, 2), occurrences[0].DueDate);
+        Assert.Equal(new DateOnly(2026, 10, 9), occurrences[1].DueDate);
+        Assert.Equal(new DateOnly(2026, 10, 16), occurrences[2].DueDate);
+        Assert.Equal(new DateOnly(2026, 10, 23), occurrences[3].DueDate);
+        Assert.Equal(new DateOnly(2026, 10, 30), occurrences[4].DueDate);
+    }
+
+    [Fact]
+    public void CalculateOccurrences_Weekly_NextDaysFilter_ReturnsOccurrencesWithinRange()
+    {
+        // Arrange: Weekly on Monday (1) starting Oct 1, 2026 (Thursday)
+        var bill = new Bill(
+            id: Guid.NewGuid(),
+            userId: _userId,
+            title: "Weekly Music Class",
+            expectedAmount: 90m,
+            frequency: BillFrequency.Weekly,
+            startDate: new DateOnly(2026, 10, 1),
+            dayOfWeek: DayOfWeek.Monday
+        );
+
+        // RefDate is Monday Oct 5, 2026. Next 14 days -> Oct 5 to Oct 19
+        // Mondays in range: Oct 5, Oct 12, Oct 19
+        var filter = new BillFilter(BillFilterType.NextDays, Days: 14);
+        var refDate = new DateOnly(2026, 10, 5);
+
+        // Act
+        var occurrences = _calculator.CalculateOccurrences(bill, filter, refDate);
+
+        // Assert
+        Assert.Equal(3, occurrences.Count);
+        Assert.Equal(new DateOnly(2026, 10, 5), occurrences[0].DueDate);
+        Assert.Equal(new DateOnly(2026, 10, 12), occurrences[1].DueDate);
+        Assert.Equal(new DateOnly(2026, 10, 19), occurrences[2].DueDate);
+    }
+
+    [Theory]
+    [InlineData(DayOfWeek.Sunday, "2026-10-04")]
+    [InlineData(DayOfWeek.Saturday, "2026-10-03")]
+    public void CalculateOccurrences_Weekly_SupportsSundayAndSaturday(DayOfWeek dayOfWeek, string expectedFirstDate)
+    {
+        // Arrange: Start date Thursday Oct 1, 2026
+        var bill = new Bill(
+            id: Guid.NewGuid(),
+            userId: _userId,
+            title: "Weekend Service",
+            expectedAmount: 100m,
+            frequency: BillFrequency.Weekly,
+            startDate: new DateOnly(2026, 10, 1),
+            dayOfWeek: dayOfWeek
+        );
+
+        var filter = new BillFilter(BillFilterType.None);
+        var refDate = new DateOnly(2026, 10, 1);
+
+        // Act
+        var occurrences = _calculator.CalculateOccurrences(bill, filter, refDate);
+
+        // Assert
+        Assert.Equal(DateOnly.Parse(expectedFirstDate), occurrences[0].DueDate);
+        Assert.Equal(dayOfWeek, occurrences[0].DueDate.DayOfWeek);
+    }
 }

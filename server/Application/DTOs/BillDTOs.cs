@@ -14,7 +14,8 @@ public record CreateBillRequest(
     int? IntervalMonths = null,
     string? Notes = null,
     string? PaymentLink = null,
-    string? BoletoUrl = null
+    string? BoletoUrl = null,
+    DayOfWeek? DayOfWeek = null
 );
 
 public record UpdateBillRequest(
@@ -28,7 +29,8 @@ public record UpdateBillRequest(
     int? IntervalMonths = null,
     string? Notes = null,
     string? PaymentLink = null,
-    string? BoletoUrl = null
+    string? BoletoUrl = null,
+    DayOfWeek? DayOfWeek = null
 );
 
 public record BillResponse(
@@ -44,7 +46,8 @@ public record BillResponse(
     int? IntervalMonths,
     string? Notes,
     DateTime CreatedAtUtc,
-    string? PaymentLink = null
+    string? PaymentLink = null,
+    DayOfWeek? DayOfWeek = null
 );
 
 public record BillOccurrenceResponse(

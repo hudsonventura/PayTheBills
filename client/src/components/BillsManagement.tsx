@@ -77,6 +77,8 @@ export const BillsManagement: React.FC<BillsManagementProps> = ({ language }) =>
     switch (freq) {
       case BillFrequency.Once:
         return t.freqOnce;
+      case BillFrequency.Weekly:
+        return t.freqWeekly;
       case BillFrequency.Monthly:
         return t.freqMonthly;
       case BillFrequency.EveryNMonths:
@@ -90,6 +92,10 @@ export const BillsManagement: React.FC<BillsManagementProps> = ({ language }) =>
     switch (bill.frequency) {
       case BillFrequency.Once:
         return t.ruleOnce.replace('{date}', formatDate(bill.dueDate ?? bill.startDate, language));
+      case BillFrequency.Weekly: {
+        const dayName = t.daysOfWeek[bill.dayOfWeek ?? 0] ?? '';
+        return t.ruleWeekly.replace('{day}', dayName);
+      }
       case BillFrequency.Monthly:
         return t.ruleMonthly.replace('{day}', String(bill.dayOfMonth ?? 1));
       case BillFrequency.EveryNMonths:

@@ -40,6 +40,7 @@ public class BillConfiguration : IEntityTypeConfiguration<Bill>
         builder.Property(b => b.DayOfMonth);
         builder.Property(b => b.MonthOfYear);
         builder.Property(b => b.IntervalMonths);
+        builder.Property(b => b.DayOfWeek);
 
         builder.Property(b => b.Notes)
             .HasMaxLength(1000);

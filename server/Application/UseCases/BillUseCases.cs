@@ -33,7 +33,8 @@ public class BillUseCases
             monthOfYear: request.MonthOfYear,
             intervalMonths: request.IntervalMonths,
             notes: request.Notes,
-            paymentLink: request.PaymentLink ?? request.BoletoUrl
+            paymentLink: request.PaymentLink ?? request.BoletoUrl,
+            dayOfWeek: request.DayOfWeek
         );
 
         _context.Bills.Add(bill);
@@ -68,7 +69,8 @@ public class BillUseCases
             monthOfYear: request.MonthOfYear,
             intervalMonths: request.IntervalMonths,
             notes: request.Notes,
-            paymentLink: request.PaymentLink ?? request.BoletoUrl
+            paymentLink: request.PaymentLink ?? request.BoletoUrl,
+            dayOfWeek: request.DayOfWeek
         );
 
         await _context.SaveChangesAsync(ct);
@@ -190,6 +192,7 @@ public class BillUseCases
         IntervalMonths: b.IntervalMonths,
         Notes: b.Notes,
         CreatedAtUtc: b.CreatedAtUtc,
-        PaymentLink: b.PaymentLink
+        PaymentLink: b.PaymentLink,
+        DayOfWeek: b.DayOfWeek
     );
 }
