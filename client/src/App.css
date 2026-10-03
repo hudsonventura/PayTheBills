@@ -363,8 +363,24 @@
 }
 
 .btn-new-bill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 0.65rem 1.25rem;
   font-weight: 600;
+}
+
+.shortcut-kbd {
+  display: inline-block;
+  font-family: inherit;
+  font-size: 0.725rem;
+  font-weight: 500;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.02em;
 }
 
 /* Filter Card */
@@ -639,6 +655,40 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.occurrence-boleto-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.85rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  background-color: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  transition: all 0.2s ease;
+}
+
+.occurrence-boleto-link:hover {
+  background-color: rgba(99, 102, 241, 0.18);
+  text-decoration: underline;
+}
+
+.btn-boleto {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  text-decoration: none;
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.btn-boleto:hover {
+  background-color: var(--accent);
+  color: #fff;
 }
 
 /* Empty State */

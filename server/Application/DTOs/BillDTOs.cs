@@ -12,7 +12,9 @@ public record CreateBillRequest(
     int? DayOfMonth = null,
     int? MonthOfYear = null,
     int? IntervalMonths = null,
-    string? Notes = null
+    string? Notes = null,
+    string? PaymentLink = null,
+    string? BoletoUrl = null
 );
 
 public record BillResponse(
@@ -27,7 +29,8 @@ public record BillResponse(
     int? MonthOfYear,
     int? IntervalMonths,
     string? Notes,
-    DateTime CreatedAtUtc
+    DateTime CreatedAtUtc,
+    string? PaymentLink = null
 );
 
 public record BillOccurrenceResponse(
@@ -40,7 +43,8 @@ public record BillOccurrenceResponse(
     Guid? ExecutionId,
     DateOnly? PaymentDate,
     decimal? PaidAmount,
-    string? Notes
+    string? Notes,
+    string? PaymentLink = null
 );
 
 public record RegisterExecutionRequest(

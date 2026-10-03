@@ -12,5 +12,6 @@ public record BillOccurrence(
     Guid? ExecutionId,
     DateOnly? PaymentDate,
     decimal? PaidAmount,
-    string? Notes
+    string? Notes,
+    string? PaymentLink = null
 );

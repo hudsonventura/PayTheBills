@@ -65,7 +65,8 @@ public class RecurrenceCalculator : IRecurrenceCalculator
                 ExecutionId: execution?.Id,
                 PaymentDate: execution?.PaymentDate,
                 PaidAmount: execution?.PaidAmount,
-                Notes: execution?.Notes ?? bill.Notes
+                Notes: execution?.Notes ?? bill.Notes,
+                PaymentLink: bill.PaymentLink
             ));
         }
 

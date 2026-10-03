@@ -16,6 +16,10 @@ Voce e o agente responsavel pelas regras de negocio do PayTheBills. Este arquivo
   - O salt é persistido na entidade do usuário no banco de dados (`PasswordSalt`).
   - O hash de senha é gerado a partir da concatenação do salt com a senha (`salt + password`) utilizando PBKDF2 com SHA-256 e 100.000 iterações.
   - No fluxo de login, o sistema busca o usuário pelo identificador/email, obtém seu `PasswordSalt` e valida a senha recebida utilizando esse salt contra o `PasswordHash` armazenado.
+- **BR-BILL-01 (Link para Boleto / Pagamento)**:
+  - Cada conta pode possuir opcionalmente um link (`PaymentLink`) para eventual geração ou visualização do boleto/pagamento da conta.
+  - O campo é opcional (pode ser nulo ou vazio). Quando informado, o valor tem tamanho máximo de 1000 caracteres.
+  - O link é persistido na entidade `Bill` (tabela `bills`), propagado nas ocorrências calculadas (`BillOccurrence`) e exibido na interface para facilitar a geração/pagamento do boleto.
 
 ## Protocolo obrigatorio para mudancas de regra
 

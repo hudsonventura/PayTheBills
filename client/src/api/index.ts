@@ -31,6 +31,7 @@ export interface BillOccurrence {
   paymentDate?: string | null;
   paidAmount?: number | null;
   notes?: string | null;
+  paymentLink?: string | null;
 }
 
 export interface CreateBillPayload {
@@ -43,6 +44,7 @@ export interface CreateBillPayload {
   monthOfYear?: number | null;
   intervalMonths?: number | null;
   notes?: string | null;
+  paymentLink?: string | null;
 }
 
 export interface RegisterExecutionPayload {

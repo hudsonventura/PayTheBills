@@ -26,6 +26,7 @@ export const BillModal: React.FC<BillModalProps> = ({
   const [intervalMonths, setIntervalMonths] = useState<number>(3);
   const [monthOfYear, setMonthOfYear] = useState<number>(1);
   const [notes, setNotes] = useState('');
+  const [paymentLink, setPaymentLink] = useState('');
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -51,6 +52,7 @@ export const BillModal: React.FC<BillModalProps> = ({
       frequency,
       startDate,
       notes: notes.trim() || null,
+      paymentLink: paymentLink.trim() || null,
     };
 
     if (frequency === BillFrequency.Once) {
@@ -275,6 +277,18 @@ export const BillModal: React.FC<BillModalProps> = ({
               </div>
             </div>
           )}
+
+          <div className="form-group">
+            <label htmlFor="bill-payment-link">{t.paymentLink}</label>
+            <input
+              id="bill-payment-link"
+              type="url"
+              className="form-control"
+              value={paymentLink}
+              onChange={(e) => setPaymentLink(e.target.value)}
+              placeholder={t.paymentLinkPlaceholder}
+            />
+          </div>
 
           <div className="form-group">
             <label htmlFor="bill-notes">{t.notes}</label>

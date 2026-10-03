@@ -16,6 +16,9 @@ public class Bill
     public int? MonthOfYear { get; private set; }
     public int? IntervalMonths { get; private set; }
 
+    public string? PaymentLink { get; private set; }
+
+
     public string? Notes { get; private set; }
     public DateTime CreatedAtUtc { get; private set; }
     public DateTime? UpdatedAtUtc { get; private set; }
@@ -37,7 +40,8 @@ public class Bill
         int? monthOfYear = null,
         int? intervalMonths = null,
         string? notes = null,
-        DateTime? createdAtUtc = null)
+        DateTime? createdAtUtc = null,
+        string? PaymentLink = null)
     {
         if (id == Guid.Empty)
             throw new ArgumentException("Bill ID cannot be empty.", nameof(id));
@@ -65,6 +69,7 @@ public class Bill
         IntervalMonths = intervalMonths;
         Notes = notes?.Trim();
         CreatedAtUtc = createdAtUtc ?? DateTime.UtcNow;
+        PaymentLink = PaymentLink;
     }
 
     private static void ValidateFrequencyParameters(

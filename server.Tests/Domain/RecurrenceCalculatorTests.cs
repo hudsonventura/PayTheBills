@@ -252,4 +252,30 @@ public class RecurrenceCalculatorTests
         Assert.False(second.IsPaid);
         Assert.Null(second.ExecutionId);
     }
+
+    [Fact]
+    public void CalculateOccurrences_PropagatesPaymentLink_ToOccurrences()
+    {
+        // Arrange
+        var bill = new Bill(
+            id: Guid.NewGuid(),
+            userId: _userId,
+            title: "Energy Bill",
+            expectedAmount: 180m,
+            frequency: BillFrequency.Monthly,
+            startDate: new DateOnly(2026, 10, 1),
+            dayOfMonth: 15,
+            paymentLink: "https://energy.example.com/boleto/october"
+        );
+
+        var filter = new BillFilter(BillFilterType.None);
+        var refDate = new DateOnly(2026, 10, 1);
+
+        // Act
+        var occurrences = _calculator.CalculateOccurrences(bill, filter, refDate);
+
+        // Assert
+        Assert.NotEmpty(occurrences);
+        Assert.All(occurrences, occ => Assert.Equal("https://energy.example.com/boleto/october", occ.PaymentLink));
+    }
 }

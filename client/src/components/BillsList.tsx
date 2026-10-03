@@ -67,10 +67,42 @@ export const BillsList: React.FC<BillsListProps> = ({ language }) => {
     }
   }, [filterType, selectedYear, selectedMonth, selectedDays, dateInfo.today, language]);
 
+  const getSafeUrl = (url?: string | null): string | null => {
+    if (!url) return null;
+    const trimmed = url.trim();
+    if (!trimmed) return null;
+    if (/^https?:\/\//i.test(trimmed)) {
+      return trimmed;
+    }
+    if (/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/.test(trimmed)) {
+      return `https://${trimmed}`;
+    }
+    return null;
+  };
+
   useEffect(() => {
     // oxlint-disable-next-line react/set-state-in-effect
     fetchOccurrences();
   }, [fetchOccurrences]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Shortcut: Ctrl+Shift++ (or Cmd+Shift++)
+      const isCtrl = e.ctrlKey || e.metaKey;
+      const isShift = e.shiftKey;
+      const isPlus = e.key === '+' || e.code === 'NumpadAdd' || (e.code === 'Equal' && isShift);
+
+      if (isCtrl && isShift && isPlus) {
+        e.preventDefault();
+        setIsBillModalOpen(true);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   const handleUndoPayment = async (occurrence: BillOccurrence) => {
     if (!occurrence.executionId) return;
@@ -147,8 +179,10 @@ export const BillsList: React.FC<BillsListProps> = ({ language }) => {
           type="button"
           className="btn btn-primary btn-new-bill"
           onClick={() => setIsBillModalOpen(true)}
+          title={`${t.newBillBtn} (${t.newBillShortcutHint})`}
         >
-          {t.newBillBtn}
+          <span>{t.newBillBtn}</span>
+          <kbd className="shortcut-kbd">Ctrl+Shift++</kbd>
         </button>
       </div>
 
@@ -338,6 +372,17 @@ export const BillsList: React.FC<BillsListProps> = ({ language }) => {
                             📝 {occ.notes}
                           </span>
                         )}
+                        {occ.paymentLink && getSafeUrl(occ.paymentLink) && (
+                          <a
+                            href={getSafeUrl(occ.paymentLink)!}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="occurrence-boleto-link"
+                            title={occ.paymentLink}
+                          >
+                            📄 {t.openBoletoAction}
+                          </a>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -351,6 +396,18 @@ export const BillsList: React.FC<BillsListProps> = ({ language }) => {
                     </div>
 
                     <div className="occurrence-actions">
+                      {occ.paymentLink && getSafeUrl(occ.paymentLink) && (
+                        <a
+                          href={getSafeUrl(occ.paymentLink)!}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn btn-xs btn-outline btn-boleto"
+                          title={`${t.openBoletoAction}: ${occ.paymentLink}`}
+                        >
+                          📄 {t.openBoletoAction}
+                        </a>
+                      )}
+
                       {!occ.isPaid ? (
                         <button
                           type="button"

@@ -44,6 +44,9 @@ public class BillConfiguration : IEntityTypeConfiguration<Bill>
         builder.Property(b => b.Notes)
             .HasMaxLength(1000);
 
+        builder.Property(b => b.PaymentLink)
+            .HasMaxLength(1000);
+
         builder.Property(b => b.CreatedAtUtc)
             .IsRequired();
 

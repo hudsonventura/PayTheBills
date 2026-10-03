@@ -79,4 +79,73 @@ public class BillEntityTests
             monthOfYear: 13
         ));
     }
+
+    [Fact]
+    public void Constructor_SetsPaymentLink_WhenProvidedAndTrims()
+    {
+        var bill = new Bill(
+            id: Guid.NewGuid(),
+            userId: _userId,
+            title: "Condominium",
+            expectedAmount: 500m,
+            frequency: BillFrequency.Monthly,
+            startDate: new DateOnly(2026, 1, 1),
+            dayOfMonth: 10,
+            paymentLink: "  https://banco.com/boleto/123  "
+        );
+
+        Assert.Equal("https://banco.com/boleto/123", bill.PaymentLink);
+    }
+
+    [Fact]
+    public void Constructor_SetsPaymentLinkToNull_WhenWhitespaceOrNull()
+    {
+        var billWithWhitespace = new Bill(
+            id: Guid.NewGuid(),
+            userId: _userId,
+            title: "Condominium",
+            expectedAmount: 500m,
+            frequency: BillFrequency.Monthly,
+            startDate: new DateOnly(2026, 1, 1),
+            dayOfMonth: 10,
+            paymentLink: "   "
+        );
+
+        Assert.Null(billWithWhitespace.PaymentLink);
+
+        var billWithNull = new Bill(
+            id: Guid.NewGuid(),
+            userId: _userId,
+            title: "Condominium",
+            expectedAmount: 500m,
+            frequency: BillFrequency.Monthly,
+            startDate: new DateOnly(2026, 1, 1),
+            dayOfMonth: 10,
+            paymentLink: null
+        );
+
+        Assert.Null(billWithNull.PaymentLink);
+    }
+
+    [Fact]
+    public void UpdatePaymentLink_UpdatesLinkAndTimestamp()
+    {
+        var bill = new Bill(
+            id: Guid.NewGuid(),
+            userId: _userId,
+            title: "Electricity",
+            expectedAmount: 150m,
+            frequency: BillFrequency.Monthly,
+            startDate: new DateOnly(2026, 1, 1),
+            dayOfMonth: 10
+        );
+
+        Assert.Null(bill.PaymentLink);
+        Assert.Null(bill.UpdatedAtUtc);
+
+        bill.UpdatePaymentLink(" https://concessionaria.com/boleto/999 ");
+
+        Assert.Equal("https://concessionaria.com/boleto/999", bill.PaymentLink);
+        Assert.NotNull(bill.UpdatedAtUtc);
+    }
 }
