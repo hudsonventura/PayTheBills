@@ -18,7 +18,6 @@ interface CreditCardGanttViewProps {
 export const CreditCardGanttView: React.FC<CreditCardGanttViewProps> = ({
   language,
   onNavigateToCards,
-  onNavigateToPurchases,
 }) => {
   const t = translations[language];
 
@@ -133,16 +132,8 @@ export const CreditCardGanttView: React.FC<CreditCardGanttViewProps> = ({
       <div className="view-header">
         <div>
           <h2>📈 {t.ganttTitle}</h2>
-          <p className="view-subtitle">{t.ganttSubtitle}</p>
         </div>
-        <div className="view-header-actions">
-          <button type="button" className="btn btn-outline" onClick={onNavigateToPurchases}>
-            🛍️ {t.purchasesTitle}
-          </button>
-          <button type="button" className="btn btn-primary" onClick={handleOpenAdd}>
-            + {t.addPurchase}
-          </button>
-        </div>
+
       </div>
 
       {error && <div className="alert alert-danger">{error}</div>}
