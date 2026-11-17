@@ -32,6 +32,7 @@ public static class AppExtensions
         // Application Use Cases
         builder.Services.AddScoped<AuthUseCases>();
         builder.Services.AddScoped<BillUseCases>();
+        builder.Services.AddScoped<CreditCardUseCases>();
 
         // Authentication & Authorization
         var jwtKey = builder.Configuration["Jwt:Key"] ?? "pay-the-bills-super-secret-development-key-2026-min-32-chars!";
@@ -127,6 +128,7 @@ public static class AppExtensions
 
         app.MapAuthEndpoints();
         app.MapBillEndpoints();
+        app.MapCreditCardEndpoints();
 
         app.MapFallbackToFile("index.html");
 

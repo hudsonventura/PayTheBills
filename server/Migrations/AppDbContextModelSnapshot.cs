@@ -110,6 +110,94 @@ namespace server.Migrations
                     b.ToTable("bill_executions", (string)null);
                 });
 
+            modelBuilder.Entity("Server.Domain.Entities.CreditCard", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ClosingDay")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Color")
+                        .HasMaxLength(30)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("DueDay")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("credit_cards", (string)null);
+                });
+
+            modelBuilder.Entity("Server.Domain.Entities.CreditCardPurchase", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("CreditCardId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly>("FirstInstallmentMonth")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("InstallmentAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly>("PurchaseDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TotalInstallments")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreditCardId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("credit_card_purchases", (string)null);
+                });
+
             modelBuilder.Entity("Server.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -179,14 +267,53 @@ namespace server.Migrations
                     b.Navigation("Bill");
                 });
 
+            modelBuilder.Entity("Server.Domain.Entities.CreditCard", b =>
+                {
+                    b.HasOne("Server.Domain.Entities.User", "User")
+                        .WithMany("CreditCards")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Server.Domain.Entities.CreditCardPurchase", b =>
+                {
+                    b.HasOne("Server.Domain.Entities.CreditCard", "CreditCard")
+                        .WithMany("Purchases")
+                        .HasForeignKey("CreditCardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Server.Domain.Entities.User", "User")
+                        .WithMany("CreditCardPurchases")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreditCard");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Server.Domain.Entities.Bill", b =>
                 {
                     b.Navigation("Executions");
                 });
 
+            modelBuilder.Entity("Server.Domain.Entities.CreditCard", b =>
+                {
+                    b.Navigation("Purchases");
+                });
+
             modelBuilder.Entity("Server.Domain.Entities.User", b =>
                 {
                     b.Navigation("Bills");
+
+                    b.Navigation("CreditCardPurchases");
+
+                    b.Navigation("CreditCards");
                 });
 #pragma warning restore 612, 618
         }

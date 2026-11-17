@@ -98,6 +98,119 @@ export interface MonthlySpending {
   bills: MonthlyBillSpending[];
 }
 
+export interface CreditCard {
+  id: string;
+  name: string;
+  color?: string | null;
+  closingDay: number;
+  dueDay: number;
+  activePurchasesCount: number;
+  totalRemainingAmount: number;
+  createdAtUtc: string;
+}
+
+export interface CreateCreditCardPayload {
+  name: string;
+  color?: string | null;
+  closingDay: number;
+  dueDay: number;
+}
+
+export interface UpdateCreditCardPayload {
+  name: string;
+  color?: string | null;
+  closingDay: number;
+  dueDay: number;
+}
+
+export interface CreditCardPurchase {
+  id: string;
+  creditCardId: string;
+  creditCardName: string;
+  creditCardColor?: string | null;
+  title: string;
+  purchaseDate: string;
+  totalAmount: number;
+  totalInstallments: number;
+  installmentAmount: number;
+  firstInstallmentMonth: string;
+  notes?: string | null;
+  paidInstallmentsCount: number;
+  remainingInstallmentsCount: number;
+  remainingAmount: number;
+  isCompleted: boolean;
+  createdAtUtc: string;
+}
+
+export interface CreateCreditCardPurchasePayload {
+  creditCardId: string;
+  title: string;
+  purchaseDate: string;
+  totalAmount: number;
+  totalInstallments: number;
+  firstInstallmentMonth?: string | null;
+  installmentAmount?: number | null;
+  notes?: string | null;
+}
+
+export interface UpdateCreditCardPurchasePayload {
+  creditCardId: string;
+  title: string;
+  purchaseDate: string;
+  totalAmount: number;
+  totalInstallments: number;
+  firstInstallmentMonth: string;
+  installmentAmount?: number | null;
+  notes?: string | null;
+}
+
+export interface MonthlyInstallmentItem {
+  purchaseId: string;
+  purchaseTitle: string;
+  creditCardId: string;
+  creditCardName: string;
+  creditCardColor?: string | null;
+  installmentNumber: number;
+  totalInstallments: number;
+  installmentAmount: number;
+}
+
+export interface MonthlyInstallmentSummary {
+  year: number;
+  month: number;
+  activePurchasesCount: number;
+  totalAmount: number;
+  items: MonthlyInstallmentItem[];
+}
+
+export interface InstallmentGanttItem {
+  id: string;
+  title: string;
+  creditCardId: string;
+  creditCardName: string;
+  creditCardColor?: string | null;
+  purchaseDate: string;
+  totalAmount: number;
+  totalInstallments: number;
+  installmentAmount: number;
+  firstInstallmentMonth: string;
+  lastInstallmentMonth: string;
+  currentInstallmentNumber: number;
+  remainingInstallments: number;
+  remainingAmount: number;
+  isCompleted: boolean;
+}
+
+export interface CreditCardTimeline {
+  referenceMonth: string;
+  finalMonth: string | null;
+  totalActivePurchases: number;
+  totalRemainingAmount: number;
+  currentMonthTotal: number;
+  monthlySummaries: MonthlyInstallmentSummary[];
+  ganttItems: InstallmentGanttItem[];
+}
+
 const TOKEN_KEY = 'paythebills_auth_token';
 
 export const getAuthToken = (): string | null => {
@@ -252,5 +365,90 @@ export const api = {
       headers: getHeaders(),
     });
     return handleResponse<MonthlySpending[]>(res);
+  },
+
+  // ---------------- Credit Cards ----------------
+  async getCreditCards(): Promise<CreditCard[]> {
+    const res = await fetch('/api/credit-cards', {
+      headers: getHeaders(),
+    });
+    return handleResponse<CreditCard[]>(res);
+  },
+
+  async createCreditCard(data: CreateCreditCardPayload): Promise<CreditCard> {
+    const res = await fetch('/api/credit-cards', {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    return handleResponse<CreditCard>(res);
+  },
+
+  async updateCreditCard(cardId: string, data: UpdateCreditCardPayload): Promise<CreditCard> {
+    const res = await fetch(`/api/credit-cards/${cardId}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    return handleResponse<CreditCard>(res);
+  },
+
+  async deleteCreditCard(cardId: string): Promise<void> {
+    const res = await fetch(`/api/credit-cards/${cardId}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
+    return handleResponse<void>(res);
+  },
+
+  // ---------------- Credit Card Purchases ----------------
+  async getCreditCardPurchases(cardId?: string): Promise<CreditCardPurchase[]> {
+    const query = new URLSearchParams();
+    if (cardId) query.set('cardId', cardId);
+    const queryString = query.toString() ? `?${query.toString()}` : '';
+
+    const res = await fetch(`/api/credit-cards/purchases${queryString}`, {
+      headers: getHeaders(),
+    });
+    return handleResponse<CreditCardPurchase[]>(res);
+  },
+
+  async createCreditCardPurchase(data: CreateCreditCardPurchasePayload): Promise<CreditCardPurchase> {
+    const res = await fetch('/api/credit-cards/purchases', {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    return handleResponse<CreditCardPurchase>(res);
+  },
+
+  async updateCreditCardPurchase(purchaseId: string, data: UpdateCreditCardPurchasePayload): Promise<CreditCardPurchase> {
+    const res = await fetch(`/api/credit-cards/purchases/${purchaseId}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    return handleResponse<CreditCardPurchase>(res);
+  },
+
+  async deleteCreditCardPurchase(purchaseId: string): Promise<void> {
+    const res = await fetch(`/api/credit-cards/purchases/${purchaseId}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
+    return handleResponse<void>(res);
+  },
+
+  // ---------------- Credit Card Timeline & Gantt ----------------
+  async getCreditCardTimeline(cardId?: string, refMonth?: string): Promise<CreditCardTimeline> {
+    const query = new URLSearchParams();
+    if (cardId) query.set('cardId', cardId);
+    if (refMonth) query.set('refMonth', refMonth);
+    const queryString = query.toString() ? `?${query.toString()}` : '';
+
+    const res = await fetch(`/api/credit-cards/timeline${queryString}`, {
+      headers: getHeaders(),
+    });
+    return handleResponse<CreditCardTimeline>(res);
   },
 };

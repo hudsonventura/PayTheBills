@@ -10,6 +10,8 @@ public class User
     public DateTime CreatedAtUtc { get; private set; }
 
     public List<Bill> Bills { get; private set; } = new();
+    public List<CreditCard> CreditCards { get; private set; } = new();
+    public List<CreditCardPurchase> CreditCardPurchases { get; private set; } = new();
 
     private User() { }
 

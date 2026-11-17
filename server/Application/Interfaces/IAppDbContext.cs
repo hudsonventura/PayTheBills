@@ -8,5 +8,7 @@ public interface IAppDbContext
     DbSet<User> Users { get; }
     DbSet<Bill> Bills { get; }
     DbSet<BillExecution> BillExecutions { get; }
+    DbSet<CreditCard> CreditCards { get; }
+    DbSet<CreditCardPurchase> CreditCardPurchases { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

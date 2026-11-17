@@ -34,6 +34,20 @@ Voce e o agente responsavel pelas regras de negocio do PayTheBills. Este arquivo
   - O valor pago de cada mês reflete os pagamentos concretizados (execuções) pertinentes àquele período.
   - O comparativo suporta tanto a visão geral (soma de todas as contas do usuário) quanto a visão discriminada por conta (filtrando uma ou mais contas).
   - Na interface, todas as contas iniciam selecionadas por padrão, e há um botão dedicado para marcar e desmarcar todas simultaneamente.
+- **BR-CARD-01 (Cartões de Crédito)**:
+  - O sistema permite o cadastro de múltiplos cartões de crédito vinculados ao usuário autenticado.
+  - Cada cartão possui nome/identificador (obrigatório), dia de fechamento (1 a 31), dia de vencimento (1 a 31) e uma cor de identificação visual.
+- **BR-CARD-02 (Compras Parceladas de Cartão)**:
+  - Representa exclusivamente gastos parcelados associados a um cartão de crédito do usuário.
+  - Campos obrigatórios: Cartão (`CreditCardId`), Descrição/Título, Data da Compra (`PurchaseDate`), Valor Total (`TotalAmount > 0`), Quantidade de Parcelas (`TotalInstallments >= 1`), e Mês de Início da 1ª Parcela (`FirstInstallmentMonth`).
+  - O valor da parcela é calculado (`TotalAmount / TotalInstallments`), admitindo eventual ajuste pelo usuário.
+- **BR-CARD-03 (Linha do Tempo Gantt e Projeção Mensal de Parcelas)**:
+  - A projeção mensal é calculada a partir do mês atual (`CurrentYear`/`CurrentMonth`) até o último mês em que houver qualquer parcela ativa (`MaxMonth`).
+  - Para cada mês da projeção, calcula-se:
+    - O número de itens parcelados ativos incidindo naquele mês.
+    - O valor total a pagar naquele mês (somatório das parcelas devidas).
+    - Os itens participantes com a respectiva identificação da parcela (ex: parcela `i` de `N`).
+  - No gráfico Gantt, cada compra é representada por uma barra horizontal contínua estendendo-se do mês de início ao mês de término, destacando visualmente as parcelas passadas, a parcela do mês atual e as parcelas futuras.
 
 ## Protocolo obrigatorio para mudancas de regra
 

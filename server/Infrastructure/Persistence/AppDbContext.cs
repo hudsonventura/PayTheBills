@@ -13,6 +13,8 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<Bill> Bills => Set<Bill>();
     public DbSet<BillExecution> BillExecutions => Set<BillExecution>();
+    public DbSet<CreditCard> CreditCards => Set<CreditCard>();
+    public DbSet<CreditCardPurchase> CreditCardPurchases => Set<CreditCardPurchase>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

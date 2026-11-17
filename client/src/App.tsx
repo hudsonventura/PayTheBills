@@ -1,18 +1,36 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { detectBrowserLanguage, type Language } from './i18n';
 import { api, getAuthToken, removeAuthToken, type User } from './api';
 import { Navbar } from './components/Navbar';
+import { Sidebar, type AppRoute } from './components/Sidebar';
 import { AuthView } from './components/AuthView';
 import { BillsList } from './components/BillsList';
 import { BillsManagement } from './components/BillsManagement';
 import { MonthlyComparisonView } from './components/MonthlyComparisonView';
+import { CreditCardGanttView } from './components/CreditCardGanttView';
+import { CreditCardPurchasesView } from './components/CreditCardPurchasesView';
+import { CreditCardsManagement } from './components/CreditCardsManagement';
 import './App.css';
+
+const parseHashRoute = (): AppRoute => {
+  const hash = window.location.hash.replace(/^#\/?/, '');
+  const validRoutes: AppRoute[] = [
+    'executions',
+    'bills',
+    'comparison',
+    'cards/gantt',
+    'cards/purchases',
+    'cards/manage',
+  ];
+  return validRoutes.includes(hash as AppRoute) ? (hash as AppRoute) : 'executions';
+};
 
 function App() {
   const [language, setLanguage] = useState<Language>(() => detectBrowserLanguage());
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(() => !!getAuthToken());
-  const [currentView, setCurrentView] = useState<'executions' | 'bills' | 'comparison'>('executions');
+  const [currentRoute, setCurrentRoute] = useState<AppRoute>(() => parseHashRoute());
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const handleLanguageChange = (lang: Language) => {
     setLanguage(lang);
@@ -22,6 +40,19 @@ function App() {
       // ignore
     }
   };
+
+  const handleRouteChange = useCallback((route: AppRoute) => {
+    window.location.hash = route;
+    setCurrentRoute(route);
+  }, []);
+
+  useEffect(() => {
+    const onHashChange = () => {
+      setCurrentRoute(parseHashRoute());
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
 
   useEffect(() => {
     const token = getAuthToken();
@@ -55,37 +86,63 @@ function App() {
   }
 
   return (
-    <div className="app-layout">
-      <Navbar
-        user={user}
-        language={language}
-        currentView={currentView}
-        onViewChange={setCurrentView}
-        onLanguageChange={handleLanguageChange}
-        onLogout={handleLogout}
-      />
+    <div className={`app-root ${user ? 'has-sidebar' : 'no-sidebar'} ${isSidebarOpen ? 'sidebar-expanded' : 'sidebar-mini'}`}>
+      {user && (
+        <Sidebar
+          user={user}
+          language={language}
+          currentRoute={currentRoute}
+          onRouteChange={handleRouteChange}
+          onLanguageChange={handleLanguageChange}
+          onLogout={handleLogout}
+          isOpen={isSidebarOpen}
+          onToggleOpen={() => setIsSidebarOpen((prev) => !prev)}
+        />
+      )}
 
-      <main className="main-content">
-        {!user ? (
-          <AuthView language={language} onSuccess={(u) => setUser(u)} />
-        ) : currentView === 'executions' ? (
-          <BillsList
-            language={language}
-            onNavigateToBills={() => setCurrentView('bills')}
-          />
-        ) : currentView === 'bills' ? (
-          <BillsManagement language={language} />
-        ) : (
-          <MonthlyComparisonView language={language} />
-        )}
-      </main>
+      <div className="app-main-wrapper">
+        <Navbar
+          user={user}
+          language={language}
+          onLanguageChange={handleLanguageChange}
+          onLogout={handleLogout}
+          onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
+        />
 
-      <footer className="app-footer">
-        <p>PayTheBills &copy; 2026 - {language === 'pt' ? 'Todos os direitos reservados' : 'All rights reserved'}</p>
-      </footer>
+        <main className="main-content">
+          {!user ? (
+            <AuthView language={language} onSuccess={(u) => setUser(u)} />
+          ) : currentRoute === 'executions' ? (
+            <BillsList
+              language={language}
+              onNavigateToBills={() => handleRouteChange('bills')}
+            />
+          ) : currentRoute === 'bills' ? (
+            <BillsManagement language={language} />
+          ) : currentRoute === 'comparison' ? (
+            <MonthlyComparisonView language={language} />
+          ) : currentRoute === 'cards/gantt' ? (
+            <CreditCardGanttView
+              language={language}
+              onNavigateToCards={() => handleRouteChange('cards/manage')}
+              onNavigateToPurchases={() => handleRouteChange('cards/purchases')}
+            />
+          ) : currentRoute === 'cards/purchases' ? (
+            <CreditCardPurchasesView
+              language={language}
+              onNavigateToCards={() => handleRouteChange('cards/manage')}
+            />
+          ) : (
+            <CreditCardsManagement language={language} />
+          )}
+        </main>
+
+        <footer className="app-footer">
+          <p>PayTheBills &copy; 2026 - {language === 'pt' ? 'Todos os direitos reservados' : 'All rights reserved'}</p>
+        </footer>
+      </div>
     </div>
   );
 }
 
 export default App;
-

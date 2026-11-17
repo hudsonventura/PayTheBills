@@ -5,25 +5,34 @@ import { type User } from '../api';
 interface NavbarProps {
   user: User | null;
   language: Language;
-  currentView: 'executions' | 'bills' | 'comparison';
-  onViewChange: (view: 'executions' | 'bills' | 'comparison') => void;
   onLanguageChange: (lang: Language) => void;
   onLogout: () => void;
+  onToggleSidebar: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   user,
   language,
-  currentView,
-  onViewChange,
   onLanguageChange,
   onLogout,
+  onToggleSidebar,
 }) => {
   const t = translations[language];
 
   return (
     <header className="navbar">
       <div className="navbar-left">
+        {user && (
+          <button
+            type="button"
+            className="navbar-hamburger-btn"
+            onClick={onToggleSidebar}
+            title="Menu"
+          >
+            ☰
+          </button>
+        )}
+
         <div className="navbar-brand">
           <div className="navbar-logo">
             <img src="/icon.svg" alt="PayTheBills" width="30" height="30" />
@@ -33,32 +42,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span className="navbar-subtitle">{t.appSubtitle}</span>
           </div>
         </div>
-
-        {user && (
-          <nav className="navbar-nav">
-            <button
-              type="button"
-              className={`nav-tab-btn ${currentView === 'executions' ? 'active' : ''}`}
-              onClick={() => onViewChange('executions')}
-            >
-              📋 {t.navExecutions}
-            </button>
-            <button
-              type="button"
-              className={`nav-tab-btn ${currentView === 'bills' ? 'active' : ''}`}
-              onClick={() => onViewChange('bills')}
-            >
-              📝 {t.navBills}
-            </button>
-            <button
-              type="button"
-              className={`nav-tab-btn ${currentView === 'comparison' ? 'active' : ''}`}
-              onClick={() => onViewChange('comparison')}
-            >
-              📊 {t.navComparison}
-            </button>
-          </nav>
-        )}
       </div>
 
       <div className="navbar-actions">
